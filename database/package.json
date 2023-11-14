@@ -1,0 +1,14 @@
+{
+  "author": "Jason Schwebke <jschwebke@worldoffloors.com>",
+  "license": "ISC",
+  "description": "A demo MongoDB for World of Floors",
+  "dependencies": {
+    "mongodb": "^6.2.0"
+  },
+  "name": "database",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
