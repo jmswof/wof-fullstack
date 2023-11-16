@@ -4,21 +4,10 @@ import Typography from '@mui/material/Typography';
 const Home: React.FC = () => {
   document.title = 'Demo - World of Floors';
 
-  const ws = new WebSocket('ws://192.168.0.67:8080/products');
-
-  ws.addEventListener('open', event => {
-    ws.send('connection estblished');
-  });
-
-  ws.addEventListener('message', event => {
-    console.log('message from server');
-    console.log(event);
-  })
-
   return (
     <>
       <Box display={'flex'} sx={{mt: 2}} justifyContent={'center'}>
-        <Typography variant='h3' gutterBottom>Jason's Demo</Typography>
+        <Typography variant='h3' gutterBottom>World of Floor (POC)</Typography>
       </Box>
       <Box display={'flex'} sx={{mt: 2}} justifyContent={'center'}>
         <Typography variant='h5'>Built with TypeScript, React, Webpack</Typography>
