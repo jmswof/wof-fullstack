@@ -2,7 +2,18 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 const Home: React.FC = () => {
-  document.title = 'Demo - Matchsquare Home';
+  document.title = 'Demo - World of Floors';
+
+  const ws = new WebSocket('ws://192.168.0.67:8080/products');
+
+  ws.addEventListener('open', event => {
+    ws.send('connection estblished');
+  });
+
+  ws.addEventListener('message', event => {
+    console.log('message from server');
+    console.log(event);
+  })
 
   return (
     <>

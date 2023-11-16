@@ -1,5 +1,7 @@
+require('dotenv').config({ path: '.env' });
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './index.js',
@@ -45,6 +47,12 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'public', 'index.html')
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+          WOF_SERVER: JSON.stringify(process.env.WOF_SERVER),
+          WOF_SOCKET: JSON.stringify(process.env.WOF_SOCKET)
+      }
     })
   ]
 };

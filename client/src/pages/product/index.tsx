@@ -21,7 +21,7 @@ const Product: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
 
   useEffect(():void => {
-    fetch('http://localhost:8080/products', {
+    fetch(process.env.WOF_SERVER + '/products', {
       method: 'GET',
       mode: 'cors',
       cache: 'no-cache',
@@ -51,7 +51,7 @@ const Product: React.FC = () => {
     if (selection.length < 0)
       return;
 
-    fetch('http://localhost:8080/products', {
+    fetch(process.env.WOF_SERVER + '/products', {
       method: 'DELETE',
       mode: 'cors',
       cache: 'no-cache',
@@ -72,7 +72,7 @@ const Product: React.FC = () => {
   };
 
   const submitCreate = ():void => {
-    fetch('http://localhost:8080/products', {
+    fetch(process.env.WOF_SERVER + '/products', {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
@@ -97,7 +97,7 @@ const Product: React.FC = () => {
     const product = products.find(p => p._id == id);
     product.name = name;
     product.cost = cost;
-    fetch('http://localhost:8080/products', {
+    fetch(process.env.WOF_SERVER + '/products', {
       method: 'PATCH',
       mode: 'cors',
       cache: 'no-cache',
