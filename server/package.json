@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "deploy": "cd script && deploy.bat"
   },
   "author": "Jason Schwebke <jschwebke@worldoffloors.com>",
   "description": "A demo Node Express server for World of Floors",
