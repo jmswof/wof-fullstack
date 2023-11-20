@@ -1,11 +1,15 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { useAuthContext } from '../../context/AuthContext';
+import { useEffect } from 'react';
 
 const Home: React.FC = () => {
-  document.title = 'Demo - World of Floors';
+  document.title = 'World of Floors';
+
+  const {user} = useAuthContext();
 
   return (
-    <>
+    <div>
       <Box display={'flex'} sx={{mt: 2}} justifyContent={'center'}>
         <Typography variant='h3' gutterBottom>World of Floor (POC)</Typography>
       </Box>
@@ -30,7 +34,7 @@ const Home: React.FC = () => {
           </tbody>
         </table>
       </Box>
-    </>
+    </div>
   );
 };
 

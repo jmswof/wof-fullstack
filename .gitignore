@@ -1,8 +1,10 @@
 client/node_modules
 client/package-lock.json
 client/.env
+client/certs
 server/node_modules
 server/package-lock.json
 server/.env
+server/certs
 database/node_modules
 database/package-lock.json
