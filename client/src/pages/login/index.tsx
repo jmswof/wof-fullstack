@@ -29,7 +29,7 @@ const Login: React.FC = () => {
     setError(false);
     auth
       .signInWithEmailAndPassword(email, password)
-      .then( creds => setUser(creds.user) )
+      .then( (creds: { user: object; }) => setUser(creds.user) )
       .catch( () => setError(true) );
   }
 
