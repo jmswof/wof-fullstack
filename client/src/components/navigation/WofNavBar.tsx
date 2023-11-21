@@ -14,38 +14,40 @@ const WofNavBar: React.FC = () => {
   const {user, setUser} = useAuthContext();
 
   return (
-    <AppBar position="sticky">
-      <Toolbar>
-        <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={() => navigate('/')}>
-          <AppsIcon />
-        </IconButton>
+    user
+    ? <AppBar position="sticky">
+        <Toolbar>
+          <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={() => navigate('/')}>
+            <AppsIcon />
+          </IconButton>
 
-        <Box display='flex' flexGrow={1}>
-          <Button sx={{ mr: 2 }} color="inherit" onClick={() => navigate('/products') }>Products</Button>
-          <Button sx={{ mr: 2 }} color="inherit" onClick={() => navigate('/example/some-long-path-variable-value') }>Parameters & Props</Button>
-        </Box>
+          <Box display='flex' flexGrow={1}>
+            <Button sx={{ mr: 2 }} color="inherit" onClick={() => navigate('/products') }>Products</Button>
+            <Button sx={{ mr: 2 }} color="inherit" onClick={() => navigate('/example/some-long-path-variable-value') }>Parameters & Props</Button>
+          </Box>
 
-        <IconButton size="large" color="inherit" onClick={() => navigate('/')}>
-          <HouseIcon />
-        </IconButton>
-        <Button color="inherit" onClick={() => navigate('/tracking') }>Tracking</Button>
-        <Button color="inherit" onClick={() => navigate('/reports') }>Reports</Button>
-        <Button color="inherit" onClick={() => navigate('/admin') }>Admin</Button>
-        <Button color="inherit" onClick={() => {
-          if (user !== null) {
-            auth
-              .signOut()
-              .then(() => {
-                setUser(undefined);
-                navigate('/sign-in');
-              })
-              .catch((error: any) => {
-                console.log(error)
-              });
-          }
-        }}>{user ? 'Logout': 'Login'}</Button>
-      </Toolbar>
-    </AppBar>
+          <IconButton size="large" color="inherit" onClick={() => navigate('/')}>
+            <HouseIcon />
+          </IconButton>
+          <Button color="inherit" onClick={() => navigate('/tracking') }>Tracking</Button>
+          <Button color="inherit" onClick={() => navigate('/reports') }>Reports</Button>
+          <Button color="inherit" onClick={() => navigate('/admin') }>Admin</Button>
+          <Button color="inherit" onClick={() => {
+            if (user !== null) {
+              auth
+                .signOut()
+                .then(() => {
+                  setUser(undefined);
+                  navigate('/sign-in');
+                })
+                .catch((error: any) => {
+                  console.log(error)
+                });
+            }
+          }}>{user ? 'Logout': 'Login'}</Button>
+        </Toolbar>
+      </AppBar>
+    : <></>
   );
 };
 
