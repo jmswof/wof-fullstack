@@ -29,7 +29,6 @@ const Login: React.FC = () => {
     auth.signInWithEmailAndPassword(email, password)
       .then(creds => {
         setUser(creds.user);
-        navigate('/');
       })
       .catch(err => {
         console.log(err);

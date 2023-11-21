@@ -6,19 +6,21 @@ import ThemeProvider from '@mui/material/styles/ThemeProvider';
 import { packersTheme } from "./theme/PackersTheme";
 import WofNavBar from './components/navigation/WofNavBar';
 import Product from './pages/product';
-import { AuthProvider } from './context/AuthContext';
+import { AuthContext, AuthType } from './context/AuthContext';
 import ProtectedRoute from './components/route/ProtectedRoute';
 import Admin from './pages/admin';
 import Tracking from './pages/tracking';
 import Reports from './pages/reports';
 import Error from './pages/error';
-import { auth } from './firebase';
-import WofAuth from './components/authentication/WofAuth';
+import { useState } from 'react';
+import CommandCenter from './pages/admin/command-center';
+
 
 const App: React.FC = () => {
+  const [user, setUser] = useState<AuthType['user']>(undefined);
+
   return <ThemeProvider theme={packersTheme}>
-    <AuthProvider>
-      <WofAuth />
+    <AuthContext.Provider value={{user, setUser}}>
       <WofNavBar />
       <Routes>
         <Route element={<ProtectedRoute />}>
@@ -26,6 +28,7 @@ const App: React.FC = () => {
           <Route path='/products' element={<Product />} />
           <Route path='/example/:rpname?' element={<Example fcname={'functional component props'}/>} />
           <Route path='/admin' element={<Admin />} />
+          <Route path='/admin/command-center' element={<CommandCenter />} />
           <Route path='/tracking' element={<Tracking />} />
           <Route path='/reports' element={<Reports />} />
         </Route>
@@ -33,7 +36,7 @@ const App: React.FC = () => {
         <Route path='/sign-in' element={<Login />} />
         <Route path="*" element={<Error />}/>
       </Routes>
-    </AuthProvider>
+    </AuthContext.Provider>
   </ThemeProvider>
 };
 export default App;

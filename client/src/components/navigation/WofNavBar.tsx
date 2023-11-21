@@ -14,7 +14,7 @@ const WofNavBar: React.FC = () => {
   const {user, setUser} = useAuthContext();
 
   return (
-    <AppBar position="static">
+    <AppBar position="sticky">
       <Toolbar>
         <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={() => navigate('/')}>
           <AppsIcon />
@@ -36,10 +36,10 @@ const WofNavBar: React.FC = () => {
             auth
               .signOut()
               .then(() => {
-                setUser(null);
+                setUser(undefined);
                 navigate('/sign-in');
               })
-              .catch((error) => {
+              .catch((error: any) => {
                 console.log(error)
               });
           }

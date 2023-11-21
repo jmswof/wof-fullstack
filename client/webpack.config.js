@@ -1,5 +1,6 @@
 require('dotenv').config({ path: '.env' });
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 
@@ -55,6 +56,11 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'public', 'index.html')
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public/static/wood5.jpg', to: 'static/' }
+      ]
     }),
     new webpack.DefinePlugin({
       'process.env': {
