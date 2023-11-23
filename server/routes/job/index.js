@@ -1,8 +1,11 @@
 const cors = require('cors');
 const { MongoClient, ObjectId } = require("mongodb");
+const admin = require("firebase-admin")
+// https://firebase.google.com/docs/admin/setup
+const config = require("../wof-server.json")
+admin.initializeApp( { credential: admin.credential.cert(config) } )
 
 const dbURL = process.env.WOF_DATABASE;
-
 const client = new MongoClient(dbURL, {
   family: 4 // Node 17+ requirement
 });
@@ -23,7 +26,7 @@ const initWs = (socketio, name) => {
         });
       
         socket.on('disconnect', () => {
-          console.log("[DISCONNECT] /products, socket size: " + nsp.sockets.size);
+          console.log("[DISCONNECT] /jobs, socket size: " + nsp.sockets.size);
             
             //console.log(`[CLOSE] /products, closed connection key: ${request.headers['sec-websocket-key']}, clients size: ${socketio.clients.size}`);
         });
@@ -33,8 +36,20 @@ const initWs = (socketio, name) => {
         })
 
         socket.emit('list', await products.find().toArray());
-        console.log('emitted products to socket');
+        console.log('emitted jobs to socket');
         console.log("Socket size: " + nsp.sockets.size);
+        admin
+          .auth()
+          .verifyIdToken(socket.handshake.auth.token)
+          .then(token => {
+            console.log(token);
+          })
+          .catch(error => {
+            console.log(`[CONNECTION] /jobs ERROR ${error.code}`);
+            console.log(`[CONNECTION] /jobs TERMINATE SOCKET ${socket.id}`);
+            socket.emit('error', 'Invalid credentials, terminating connection...');
+            socket.disconnect();
+          })
         //console.log(`[CONNECTION] /products, emit list to key: ${request.headers['sec-websocket-key']}, clients size: ${socketio.clients.size}`);
         //console.log(connection);
     });
@@ -43,12 +58,12 @@ const initWs = (socketio, name) => {
 const initRest = (wss, app, name) => {
 
     // GET /products (READ)
-    app.get('/products', cors(), async (request, response, next) => {
+    app.get('/jobs', cors(), async (request, response, next) => {
         response.json(await products.find().toArray());
     });
 
     // POST /products (CREATE)
-    app.post('/products', cors(), async (request, response, next) => {
+    app.post('/jobs', cors(), async (request, response, next) => {
         console.log(request.body);
         response.json(await products.insertOne(request.body));
         const t = JSON.stringify(await products.find().toArray());
@@ -59,7 +74,7 @@ const initRest = (wss, app, name) => {
     });
 
     // PATCH /products (UPDATE)
-    app.patch('/products', cors(), async (request, response, next) => {
+    app.patch('/jobs', cors(), async (request, response, next) => {
         console.log(request.body);
         response.json(await products.updateOne(
             {_id: new ObjectId(request.body._id)},
@@ -73,7 +88,7 @@ const initRest = (wss, app, name) => {
     });
 
     // DELETE /products (DELETE)
-    app.delete('/products', cors(), async (request, response, next) => {
+    app.delete('/jobs', cors(), async (request, response, next) => {
         response.json(
             await products.deleteMany({
                 _id: {
@@ -88,10 +103,10 @@ const initRest = (wss, app, name) => {
         });
     });
 
-    console.log("Mapped product routes and socket namespace");
+    console.log("Mapped job routes and socket namespace");
 };
 
-const initProducts = (socketio, app, name) => {
+const initJobs = (socketio, app, name) => {
     initRest(
         initWs(socketio, name),
         app,
@@ -99,4 +114,4 @@ const initProducts = (socketio, app, name) => {
     );
 };
 
-module.exports = { initProducts };
+module.exports = { initJobs };

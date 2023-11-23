@@ -7,5 +7,6 @@ server/node_modules
 server/package-lock.json
 server/.env
 server/certs
+server/wof-server.json
 database/node_modules
 database/package-lock.json

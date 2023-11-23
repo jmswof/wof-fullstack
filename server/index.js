@@ -1,4 +1,5 @@
 require('dotenv').config({path: '.env'});
+const { initJobs } = require('./routes/job');
 const { initProducts } = require('./routes/product');
 // const { initDevices } = require('./routes/device');
 const express = require('express');
@@ -17,6 +18,7 @@ app.use(require('cors')()); // CORS because we're on different port :(
 // We use firebase UI/UX, and verify requests with JWT token.
 
 initProducts(socketio, app, '/products');
+initJobs(socketio, app, '/jobs');
 //initDevices(server, app);
 
 server.listen(port, () => {
