@@ -15,8 +15,11 @@ import Error from './pages/error';
 import { useState } from 'react';
 import CommandCenter from './pages/admin/command-center';
 import ManageUsers from './pages/admin/manage-users';
+import FloorType from './pages/configure/floor-type';
 
 
+// https://reactrouter.com/en/main/routers/picking-a-router
+// TODO: Update to use createBrowserRouter
 const App: React.FC = () => {
   const [user, setUser] = useState<AuthType['user']>(undefined);
 
@@ -31,6 +34,7 @@ const App: React.FC = () => {
           <Route path='/admin' element={<Admin />} />
           <Route path='/admin/command-center' element={<CommandCenter />} />
           <Route path='/admin/manage-users' element={<ManageUsers />} />
+          <Route path='/config/floor-type' element={<FloorType />} />
           <Route path='/tracking' element={<Tracking />} />
           <Route path='/reports' element={<Reports />} />
         </Route>

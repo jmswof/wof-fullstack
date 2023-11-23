@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import { useAuthContext } from '../../context/AuthContext';
-import { grey } from '@mui/material/colors';
+import grey from '@mui/material/colors/grey';
 import { useNavigate } from 'react-router-dom';
 
 const Admin: React.FC = () => {
@@ -156,6 +156,14 @@ const Admin: React.FC = () => {
         <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
           <Typography variant='button'>
             Add Soft Surface
+          </Typography>
+        </Button>
+        <Button
+          sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}
+          onClick={() => navigate('/config/floor-type')}
+        >
+          <Typography variant='button'>
+            Floor Type
           </Typography>
         </Button>
       </Box>

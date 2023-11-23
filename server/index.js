@@ -1,9 +1,12 @@
 require('dotenv').config({path: '.env'});
+
 const { initJobs } = require('./routes/job');
 const { initProducts } = require('./routes/product');
-// const { initDevices } = require('./routes/device');
-const express = require('express');
+const { initFloorType } = require('./routes/configure/floor-type');
 const { initUsers } = require('./routes/user');
+// const { initDevices } = require('./routes/device');
+
+const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 const socketio = require('socket.io')(server);
@@ -11,6 +14,7 @@ const socketio = require('socket.io')(server);
 // https://firebase.google.com/docs/admin/setup
 const admin = require("firebase-admin");
 const config = require("./wof-server.json");
+
 admin.initializeApp( { credential: admin.credential.cert(config) } );
 
 
@@ -26,6 +30,7 @@ app.use(require('cors')()); // CORS because we're on different port :(
 initProducts(socketio, app, '/products');
 initJobs(socketio, app, '/jobs');
 initUsers(app, '/users');
+initFloorType(app, '/configure/floor-type');
 //initDevices(server, app);
 
 server.listen(port, () => {
