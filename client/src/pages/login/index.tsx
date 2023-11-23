@@ -46,16 +46,16 @@ const Login: React.FC = () => {
             borderRadius: "7px"
           }}
         >
-            {
-              error &&
-              <Box sx={{mb: 3, width: '100%'}}>
-                <Alert severity='error'>
-                  <Typography variant='body1'>Error!</Typography>
-                  <Typography variant='caption'>Please check your credentials.</Typography>
-                </Alert>
-              </Box>
-            }
-            <Alert sx={{mt: 0, mb: 3}} severity='info' variant='filled'>WOF 250x150px Logo</Alert>
+          {
+            error &&
+            <Box sx={{mb: 3, width: '100%'}}>
+              <Alert severity='error'>
+                <Typography variant='body1'>Error!</Typography>
+                <Typography variant='caption'>Please check your credentials.</Typography>
+              </Alert>
+            </Box>
+          }
+          <Alert sx={{mt: 0, mb: 3}} severity='info' variant='filled'>WOF 250x150px Logo</Alert>
           <Box>
             <TextField sx={{mb: 1}} onChange={(e) => setEmail(e.target.value)} type="email" name="email" variant="filled" required fullWidth label="Email Address" color='secondary' autoComplete="email" autoFocus />
             <TextField onChange={(e) => setPassword(e.target.value)} type="password" name="password" label="Password" variant="filled" required fullWidth color="secondary" autoComplete="current-password" />

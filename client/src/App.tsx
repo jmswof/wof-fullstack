@@ -14,6 +14,7 @@ import Reports from './pages/reports';
 import Error from './pages/error';
 import { useState } from 'react';
 import CommandCenter from './pages/admin/command-center';
+import ManageUsers from './pages/admin/manage-users';
 
 
 const App: React.FC = () => {
@@ -29,6 +30,7 @@ const App: React.FC = () => {
           <Route path='/example/:rpname?' element={<Example fcname={'functional component props'}/>} />
           <Route path='/admin' element={<Admin />} />
           <Route path='/admin/command-center' element={<CommandCenter />} />
+          <Route path='/admin/manage-users' element={<ManageUsers />} />
           <Route path='/tracking' element={<Tracking />} />
           <Route path='/reports' element={<Reports />} />
         </Route>

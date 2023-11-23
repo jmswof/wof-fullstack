@@ -34,7 +34,8 @@ const Admin: React.FC = () => {
         </Button>
         <Button
           sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}
-          onClick={() => navigate('/admin/command-center')}>
+          onClick={() => navigate('/admin/command-center')}
+        >
           <Typography variant='button'>
             Command Center
           </Typography>
@@ -132,6 +133,14 @@ const Admin: React.FC = () => {
         <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
           <Typography variant='button'>
             Sales Agents
+          </Typography>
+        </Button>
+        <Button
+          sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}
+          onClick={() => navigate('/admin/manage-users')}
+        >
+          <Typography variant='button'>
+            Web and Tablet Users
           </Typography>
         </Button>
       </Box>
