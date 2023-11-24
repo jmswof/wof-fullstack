@@ -1,6 +1,6 @@
 const cors = require('cors');
-const { MongoClient, ObjectId } = require("mongodb");
 const admin = require("firebase-admin");
+const { MongoClient, ObjectId } = require("mongodb");
 const dbURL = process.env.WOF_DATABASE;
 const client = new MongoClient(dbURL, { family: 4 /* Node 17+ requirement */ });
 const database = client.db('world-of-floors');

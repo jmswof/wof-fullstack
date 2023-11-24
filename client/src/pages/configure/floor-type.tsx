@@ -72,7 +72,7 @@ const FloorType: React.FC = () => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${btoa(user['multiFactor'].user.accessToken)}`
+        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
       },
       body: JSON.stringify({name})
     })
@@ -88,7 +88,8 @@ const FloorType: React.FC = () => {
   };
 
   const submitDelete = ():void => {
-    if (selection.length < 0)
+    console.log(selection);
+    if (selection.length < 1)
       return;
 
     fetch(`${process.env.WOF_SERVER}/configure/floor-type`, {
@@ -137,7 +138,7 @@ const FloorType: React.FC = () => {
   }
 
   return (
-    <Container>
+    <Container sx={{mb:5}}>
       {
         openDialog &&
         <UpdateFloorTypeModal

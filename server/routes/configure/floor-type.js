@@ -11,27 +11,10 @@ const initRest = (app, route) => {
 
     // GET /configure/floor-type (READ)
     app.get(route, cors(), async (request, response) => {
-      if (!request.headers.authorization) {
-        response.status(403).end();
-        console.log(`[HTTP][GET] ${route}: unauthorized header, return a 403 response...`);
-        return;
-      }
-
-      const clientToken = atob(request.headers.authorization.split(' ')[1]);
-
-      await admin.auth().verifyIdToken(clientToken)
-        .then(async token => {
-          const data = await floorTypes.find().toArray();
-          response.json(data);
-          console.log(`[HTTP][GET] ${route}: verified token - response with array of floorTypes[${data.length}] to ${token.email}`);
-        })
-        .catch(error => {
-          console.log(`[HTTP][GET] ${route}: invalid token - ${error}`);
-          response.status(403).end();
-        });
+      const data = await floorTypes.find().toArray();
+      response.json(data);
+      console.log(`[HTTP][GET] ${route}: shared floorTypes[${data.length}] to ${request.token.email}`);
     });
-
-    // TODO VERIFY TOKEN FOR ALL TYPE OF REQUESTS BELOW!!!!
 
     // POST /configure/floor-type (CREATE)
     app.post(route, cors(), async (request, response) => {

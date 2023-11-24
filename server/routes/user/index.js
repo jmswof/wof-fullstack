@@ -5,41 +5,33 @@ const initRest = (app, route) => {
 
     // GET /users (READ)
     app.get(route, cors(), async (request, response) => {
-      if (!request.headers.authorization) {
-        response.status(403).end();
-        console.log(`[HTTP][GET] /users: unauthorized header, return a 403 response...`);
-        return;
-      }
-
-      const clientToken = atob(request.headers.authorization.split(' ')[1]);
-
-      await admin.auth().verifyIdToken(clientToken)
-        .then(async token => {
-          let users = [];
-          const listUsers = async (nextToken) => {
-            await admin.auth().listUsers(1000, nextToken)
-              .then((result) => {
-                result.users.forEach(async user => {
-                  users.push(user.toJSON())
-                  if (result.pageToken) {
-                    await listUsers(result.pageToken);
-                  }
-                })
-              })
-              .catch((error) => {
-                // Shouldn't happen
-                console.log(`[HTTP][GET] /users: error in users list ${error}`);
-                console.log(error);
-              })
-          };
-          await listUsers();
-          response.json(users);
-          console.log(`[HTTP][GET] /users: verified token - response with array of users[${users.length}] to ${token.email}`);
-        })
-        .catch(error => {
-          console.log(`[HTTP][GET] /users: unauthorized header ${error}`);
-          response.status(403).end();
-        });
+      let users = [];
+      const listUsers = async (nextToken) => {
+        await admin.auth().listUsers(1000, nextToken)
+          .then((result) => {
+            result.users.forEach(async user => {
+              users.push({
+                uid: user.uid,
+                email: user.email,
+                disabled: user.disabled,
+                emailVerified: user.emailVerified,
+                creationTime: user.metadata.creationTime,
+                lastSignInTime: user.metadata.lastSignInTime
+              });
+              if (result.pageToken) {
+                await listUsers(result.pageToken);
+              }
+            })
+          })
+          .catch((error) => {
+            // Shouldn't happen
+            console.log(`[HTTP][GET] ${route}: error in users list ${error}`);
+            console.log(error);
+          })
+      };
+      await listUsers();
+      response.json(users);
+      console.log(`[HTTP][GET] ${route}: shared users[${users.length}] to ${request.token.email}`);
     });
 
     // POST /users (CREATE)

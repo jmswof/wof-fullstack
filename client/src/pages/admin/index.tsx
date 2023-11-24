@@ -60,7 +60,10 @@ const Admin: React.FC = () => {
       <Typography variant='h5'>Scheduling</Typography>
       <Divider sx={{borderBottomWidth: 4, borderColor: grey[800]}} />
       <Box display={'flex'} sx={{my: 3}}>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
+      <Button
+          sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}
+          onClick={() => navigate('/admin/schedule-appointment')}
+        >
           <Typography variant='button'>
             Schedule New Appointment
           </Typography>

@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useAuthContext } from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
-import { Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Container, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material';
 
 const ManageUsers: React.FC = () => {
   document.title = 'World of Floors - User Management';
@@ -18,8 +18,7 @@ const ManageUsers: React.FC = () => {
       cache: 'no-cache',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + btoa(user['multiFactor'].user.accessToken)
+        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
       }
     })
     .then(response => response.json())
@@ -28,9 +27,9 @@ const ManageUsers: React.FC = () => {
   }, []);
   
   return (
-    <Container>
+    <Container sx={{mb:5}}>
       <Box display={'flex'} sx={{mt: 2}} justifyContent={'center'}>
-        <Typography variant='h3' gutterBottom>World of Floors Users</Typography>
+        <Typography variant='h3'>World of Floors Users</Typography>
       </Box>
       <TableContainer component={Paper}>
         <Table>
@@ -51,12 +50,19 @@ const ManageUsers: React.FC = () => {
                   <TableCell>{user['email']}</TableCell>
                   <TableCell>{user['emailVerified'] ? 'Yes' : 'No'}</TableCell>
                   <TableCell>{user['disabled'] ? 'Yes' : 'No'}</TableCell>
-                  <TableCell>{user['metadata']['creationTime']}</TableCell>
-                  <TableCell>{user['metadata']['lastSignInTime']}</TableCell>
+                  <TableCell>{user['creationTime']}</TableCell>
+                  <TableCell>{user['lastSignInTime']}</TableCell>
                 </TableRow>
               )
             )}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell align='center' colSpan={6}>
+                <Typography variant='caption'>{users.length} Users</Typography>
+              </TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
       </TableContainer>
     </Container>
