@@ -1,11 +1,9 @@
 const cors = require('cors');
-const admin = require("firebase-admin");
 const { MongoClient, ObjectId } = require("mongodb");
 const dbURL = process.env.WOF_DATABASE;
 const client = new MongoClient(dbURL, { family: 4 /* Node 17+ requirement */ });
 const database = client.db('world-of-floors');
 const appointments = database.collection('appointments');
-const floorTypes = database.collection('floor-types');
 
 const initRest = (app, route) => {
 
@@ -31,7 +29,7 @@ const initRest = (app, route) => {
       console.log(request.body);
     });
 
-    console.log(`[INIT] initialized REST on ${route} CRUD routes...`);
+    console.log(`[INIT] ${route} initialized REST for CRUD routes.`);
 };
 
 const initAppointments = (app, route) => initRest(app, route);
