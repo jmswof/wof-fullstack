@@ -19,7 +19,7 @@ const initRest = (app, route) => {
     // POST /configure/floor-type (CREATE)
     app.post(route, cors(), async (request, response) => {
       response.json(await floorTypes.insertOne(request.body));
-      console.log(`[HTTP][POST] ${route}: ${request.token.email} created a new ${request.body} floor type.`);
+      console.log(`[HTTP][POST] ${route}: ${request.token.email} created a new ${request.body['name']} floor type.`);
     });
 
     // PATCH /configure/floor-type (UPDATE)
@@ -34,15 +34,15 @@ const initRest = (app, route) => {
 
     // DELETE /configure/floor-type (DELETE)
     app.delete(route, cors(), async (request, response) => {
-      console.log(request.body);
       response.json(
         await floorTypes.deleteMany({
           _id: { $in: request.body.map(id => (new ObjectId(id))) }
         })
       );
+      console.log(`[HTTP][DELETE] ${route}: ${request.token.email} deleted ${request.body.length} floor type(s).`);
     });
 
-    console.log(`[INIT] ${route} initialized REST for CRUD routes.`);
+    console.log(`[INIT][HTTP] ${route}`);
 };
 
 const initFloorType = (app, route) => initRest(app, route);

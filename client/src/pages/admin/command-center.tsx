@@ -1,44 +1,34 @@
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { useParams } from 'react-router-dom';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import TabletMacIcon from '@mui/icons-material/TabletMac';
-import TabletAndroidIcon from '@mui/icons-material/TabletAndroid';
 import IconButton from '@mui/material/IconButton';
-import { Button, keyframes, makeStyles } from '@mui/material';
+import Paper from '@mui/material/Paper';
+import TabletAndroidIcon from '@mui/icons-material/TabletAndroid';
+import TabletMacIcon from '@mui/icons-material/TabletMac';
+import Typography from '@mui/material/Typography';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import { keyframes } from '@mui/material';
 
 const CommandCenter: React.FC = () => {
   document.title = 'World of Floors - Command Center';
-  // .blink {
-  //   animation: fade 1s steps(5, start) infinite;
-  //   -webkit-animation: fade 1s steps(5, start) infinite;
-  // }
-  // @keyframes fade {
-  //   0%,100% { opacity: 0 }
-  //   50% { opacity: 1 }
-  // }
-  // @-webkit-keyframes fade {
-  //   0%,100% { opacity: 0 }
-  //   50% { opacity: 1 }
-  // }
+
   const fade = keyframes`
     0%,100% { opacity: 0 }
     50% { opacity: 1 }
   `;
+
   return (
-    <Container>
+    <Container component={Paper} sx={{my: 5, p: 2}}>
       <Box display={'flex'} justifyContent={'center'}>
-        <Typography sx={{mt: 2}} variant='h3'>Command Center</Typography>
+        <Typography variant='h3'>Command Center</Typography>
       </Box>
       <Box display={'flex'} justifyContent={'center'}>
-        <TableContainer component={Paper}>
+        <TableContainer>
           <Table>
             <TableHead>
               <TableRow>

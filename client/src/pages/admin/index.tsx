@@ -1,10 +1,10 @@
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
 import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button";
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import { useAuthContext } from '../../context/AuthContext';
-import grey from '@mui/material/colors/grey';
 import { useNavigate } from 'react-router-dom';
 
 const Admin: React.FC = () => {
@@ -14,160 +14,110 @@ const Admin: React.FC = () => {
   const {user} = useAuthContext();
 
   return (
-    <Container sx={{ p: 3 }}>
-      <Box display={'flex'}>
-        <Typography variant='h4' margin={'0 auto'}>Admin</Typography>
+    <Container component={Paper} sx={{my: 5, p: 2}}>
+      <Box display={'flex'} justifyContent={'center'}>
+        <Typography variant='h3'>Administration</Typography>
       </Box>
 
       <Typography variant='h5'>Project Management</Typography>
-      <Divider sx={{borderBottomWidth: 4, borderColor: grey[800]}} />
+      <Divider sx={{borderBottomWidth: 4}} />
       <Box display={'flex'} sx={{my: 3}}>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Projects
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Projects</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Project Coordinator Dashboard
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Project Coordinator Dashboard</Typography>
         </Button>
-        <Button
-          sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'
           onClick={() => navigate('/admin/command-center')}
         >
-          <Typography variant='button'>
-            Command Center
-          </Typography>
+          <Typography variant='caption'>Command Center</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Recovery Center
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Recovery Center</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Call Center
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Call Center</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Installation Calendar
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Installation Calendar</Typography>
         </Button>
       </Box>
 
       <Typography variant='h5'>Scheduling</Typography>
-      <Divider sx={{borderBottomWidth: 4, borderColor: grey[800]}} />
+      <Divider sx={{borderBottomWidth: 4}} />
       <Box display={'flex'} sx={{my: 3}}>
-      <Button
-          sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}
+      <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'
           onClick={() => navigate('/admin/schedule-appointment')}
         >
-          <Typography variant='button'>
-            Schedule New Appointment
-          </Typography>
+          <Typography variant='caption'>Schedule New Appointment</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Block Appointment Times
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Block Appointment Times</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            View Blocked Appointment Times
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>View Blocked Appointment Times</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            View/Edit Service Area
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>View/Edit Service Area</Typography>
         </Button>
       </Box>
 
       <Typography variant='h5'>Pricing</Typography>
-      <Divider sx={{borderBottomWidth: 4, borderColor: grey[800]}} />
+      <Divider sx={{borderBottomWidth: 4}} />
       <Box display={'flex'} sx={{my: 3}}>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Labor Rates
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Labor Rates</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Product Costs
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Product Costs</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Product Pricing
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Product Pricing</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Financing
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Financing</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Accessory Product Pricing
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Accessory Product Pricing</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Pricing Controls
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Pricing Controls</Typography>
         </Button>
       </Box>
 
       <Typography variant='h5'>Employee Management</Typography>
-      <Divider sx={{borderBottomWidth: 4, borderColor: grey[800]}} />
+      <Divider sx={{borderBottomWidth: 4}} />
       <Box display={'flex'} sx={{my: 3}}>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Contractors
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Contractors</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Contractor Rate Settings
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Contractor Rate Settings</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Sales Agents
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Sales Agents</Typography>
         </Button>
-        <Button
-          sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'
           onClick={() => navigate('/admin/manage-users')}
         >
-          <Typography variant='button'>
-            Web and Tablet Users
-          </Typography>
+          <Typography variant='caption'>Web and Tablet Users</Typography>
         </Button>
       </Box>
 
       <Typography variant='h5'>Inventory</Typography>
-      <Divider sx={{borderBottomWidth: 4, borderColor: grey[800]}} />
+      <Divider sx={{borderBottomWidth: 4}} />
       <Box display={'flex'} sx={{my: 3}}>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Add Hard Surface
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Add Hard Surface</Typography>
         </Button>
-        <Button sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}>
-          <Typography variant='button'>
-            Add Soft Surface
-          </Typography>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+          <Typography variant='caption'>Add Soft Surface</Typography>
         </Button>
-        <Button
-          sx={{mx: 1, backgroundColor: grey[300], borderRadius: '12px', boxShadow: 2}}
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'
           onClick={() => navigate('/config/floor-type')}
         >
-          <Typography variant='button'>
-            Floor Type
-          </Typography>
+          <Typography variant='caption'>Floor Type</Typography>
         </Button>
       </Box>
     </Container>

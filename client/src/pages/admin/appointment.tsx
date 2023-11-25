@@ -26,7 +26,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useAuthContext } from '../../context/AuthContext';
 import { FormEvent, useEffect, useState } from 'react';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 
@@ -124,11 +125,11 @@ const Appointment: React.FC = () => {
   }, []);
   
   return (
-    <Container sx={{ mb: 5}}>
-      <Box display={'flex'} sx={{my: 2}} justifyContent={'center'}>
-        <Typography variant='h3'>Schedule New Appointment</Typography>
+    <Container component={Paper} sx={{my: 5, p: 2}}>
+      <Box display={'flex'} justifyContent={'center'}>
+        <Typography variant='h3'>Schedule Management</Typography>
       </Box>
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table>
           <TableHead>
             <TableRow>

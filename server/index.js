@@ -41,8 +41,8 @@ const verifyToken = async (request, response, next) => {
         response.sendStatus(403);
       });
   } else {
-    console.log(`[MIDDLEWARE] ${request.url} Invalid token`);
-    response.sendStatus(403);
+    console.log(`[MIDDLEWARE][${request.method}] ${request.url} response with 400 Bad Request`);
+    response.sendStatus(400);
   }
 };
 
@@ -64,6 +64,6 @@ initAppointments(app, '/appointments');
 //initDevices(server, app);
 
 server.listen(port, () => {
-  console.log(`CORS-enabled web server on ${port}.`);
-  console.log(`WOF Database ${dbURL}`);
+  console.log(`[INIT] CORS-enabled web server on ${port}.`);
+  console.log(`[INIT] WOF Database ${dbURL}`);
 });

@@ -36,20 +36,20 @@ const initRest = (app, route) => {
 
     // POST /users (CREATE)
     app.post(route, cors(), async (request, response) => {
-      console.log(request.body);
+      console.log(`[HTTP][POST] ${route}: not implemented yet`);
     });
 
     // PATCH /users (UPDATE)
     app.patch(route, cors(), async (request, response) => {
-      console.log(request.body);
+      console.log(`[HTTP][PATCH] ${route}: not implemented yet`);
     });
 
     // DELETE /users (DELETE)
     app.delete(route, cors(), async (request, response) => {
-      console.log(request.body);
+      console.log(`[HTTP][DELETE] ${route}: not implemented yet`);
     });
 
-    console.log(`[INIT] initialized REST on ${route} CRUD routes...`);
+    console.log(`[INIT][HTTP] ${route}`);
 };
 
 const initUsers = (app, route) => initRest(app, route);

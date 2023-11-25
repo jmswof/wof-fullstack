@@ -21,15 +21,15 @@ const initRest = (app, route) => {
 
     // PATCH /appointments (UPDATE)
     app.patch(route, cors(), async (request, response) => {
-      console.log(request.body);
+      console.log(`[HTTP][PATCH] ${route}: ${request.token.email} not implemented yet`);
     });
 
     // DELETE /appointments (DELETE)
     app.delete(route, cors(), async (request, response) => {
-      console.log(request.body);
+      console.log(`[HTTP][DELETE] ${route}: ${request.token.email} not implemented yet`);
     });
 
-    console.log(`[INIT] ${route} initialized REST for CRUD routes.`);
+    console.log(`[INIT][HTTP] ${route}`);
 };
 
 const initAppointments = (app, route) => initRest(app, route);

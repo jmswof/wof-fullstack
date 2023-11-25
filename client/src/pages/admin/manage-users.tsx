@@ -1,8 +1,16 @@
 import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableFooter from '@mui/material/TableFooter';
+import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { useAuthContext } from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
-import { Container, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material';
 
 const ManageUsers: React.FC = () => {
   document.title = 'World of Floors - User Management';
@@ -27,11 +35,11 @@ const ManageUsers: React.FC = () => {
   }, []);
   
   return (
-    <Container sx={{mb:5}}>
-      <Box display={'flex'} sx={{mt: 2}} justifyContent={'center'}>
-        <Typography variant='h3'>World of Floors Users</Typography>
+    <Container component={Paper} sx={{my:5, p: 2}}>
+      <Box display={'flex'} justifyContent={'center'}>
+        <Typography variant='h3'>World of Floor Users</Typography>
       </Box>
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table>
           <TableHead>
             <TableRow>

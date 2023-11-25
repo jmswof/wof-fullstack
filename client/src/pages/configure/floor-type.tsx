@@ -35,27 +35,23 @@ const FloorType: React.FC = () => {
   const [selection, setSelection] = useState(new Array(floorTypes.length).fill(''));
   const [openDialog, setOpenDialog] = useState<boolean>(false);
 
-  useEffect(
-    () => {
-      fetch(`${process.env.WOF_SERVER}/configure/floor-type`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Basic ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json())
-      .then(response => setFloorTypes(response))
-      .catch(error => {
-        // TODO: Navigate to login screen if 403 response.
-        console.log(error)
-      });
-    },
-    []
-  );
+  useEffect(() => {
+    fetch(`${process.env.WOF_SERVER}/configure/floor-type`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+      }
+    })
+    .then(response => response.json())
+    .then(response => setFloorTypes(response))
+    // TODO: Navigate to login screen if 403 response.
+    .catch(error => console.log(error));
+  }, []);
 
   const handleSelection = (e:FormEvent<HTMLInputElement>, id:string):void => {
     const index = selection.indexOf(id);
+
     if (index < 0)
       selection.push(id);
     else
@@ -78,7 +74,6 @@ const FloorType: React.FC = () => {
     })
     .then(response => response.json())
     .then(response => {
-      console.log(response);
       if (response.acknowledged && response.insertedId !== null) {
         setFloorTypes([...floorTypes, { _id: response.insertedId, name }]);
         setName('');
@@ -87,8 +82,32 @@ const FloorType: React.FC = () => {
     .catch(error => console.log(error));
   };
 
+  const submitUpdate = (id:string, name:string):void => {
+    const floorType = floorTypes.find(p => p._id == id);
+    floorType.name = name;
+    fetch(`${process.env.WOF_SERVER}/configure/floor-type`, {
+      method: 'PATCH',
+      mode: 'cors',
+      cache: 'no-cache',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+      },
+      body: JSON.stringify(floorType)
+    })
+    .then(response => response.json())
+    .then(response => {
+      if (response.acknowledged && response.matchedCount === 1) {
+        setId('')
+        setName('');
+        setOpenDialog(false);
+      }
+    })
+    .catch(error => console.log(error));
+  }
+
   const submitDelete = ():void => {
-    console.log(selection);
     if (selection.length < 1)
       return;
 
@@ -98,7 +117,8 @@ const FloorType: React.FC = () => {
       cache: 'no-cache',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
       },
       body: JSON.stringify(selection)
     })
@@ -112,33 +132,8 @@ const FloorType: React.FC = () => {
     .catch(error => console.log(error));
   };
 
-  const handleUpdate = (id:string, name:string):void => {
-    const floorType = floorTypes.find(p => p._id == id);
-    floorType.name = name;
-    fetch(`${process.env.WOF_SERVER}/configure/floor-type`, {
-      method: 'PATCH',
-      mode: 'cors',
-      cache: 'no-cache',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(floorType)
-    })
-    .then(response => response.json())
-    .then(response => {
-      console.log(response);
-      if (response.acknowledged && response.matchedCount === 1) {
-        setId('')
-        setName('');
-        setOpenDialog(false);
-      }
-    })
-    .catch(error => console.log(error));
-  }
-
   return (
-    <Container sx={{mb:5}}>
+    <Container component={Paper} sx={{my:5, p: 2}}>
       {
         openDialog &&
         <UpdateFloorTypeModal
@@ -150,13 +145,13 @@ const FloorType: React.FC = () => {
             setName('');
             setOpenDialog(false)
           }}
-          update={handleUpdate}
+          update={submitUpdate}
         />
       }
-      <Box display={'flex'} sx={{my: 2}} justifyContent={'center'}>
-        <Typography variant='h3'>Configure Floor Type</Typography>
-      </Box>
-      <TableContainer component={Paper}>
+      <TableContainer>
+        <Box display={'flex'} justifyContent={'center'}>
+          <Typography variant='h3'>Floor Types</Typography>
+        </Box>
         <Table>
           <TableHead>
             <TableRow>

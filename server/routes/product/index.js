@@ -81,7 +81,7 @@ const initRest = (wss, app, route) => {
     });
   });
 
-    console.log(`[INIT] initialized REST and WS on ${route} for CRUD routes...`);
+  console.log(`[INIT][HTTP][WS] ${route}`);
 };
 
 const initProducts = (socketio, app, route) => {
