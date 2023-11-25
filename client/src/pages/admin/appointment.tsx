@@ -37,7 +37,7 @@ const Appointment: React.FC = () => {
   const [agents, setAgents] = useState<[]>([]);
   const [floorTypes, setFloorTypes] = useState<[]>([]);
   const [appointments, setAppointments] = useState<object[]>([]);
-  const [appointment, setAppointment] = useState<object>({});
+  const [appointment, setAppointment] = useState<{}>({});
 
   const [selection, setSelection] = useState(new Array(appointments.length).fill(''));
   const [selectedAgent, setSelectedAgent] = useState<string>('');
@@ -112,19 +112,15 @@ const Appointment: React.FC = () => {
         'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
       },
       body: JSON.stringify({
-        agent: selectedAgent,
-        floorTypes: selectedFloorTypes,
-        scheduleDate: selectedDate
+        agent: appointment['agent'],
+        floorTypes: appointment['floorTypes'],
+        scheduleDate: appointment['scheduleDate']
       })
     })
     .then(response => response.json())
     .then(response => {
-      console.log(response);
       if (response.acknowledged && response.insertedId !== null) {
-        setAppointments([...appointments, { _id: response.insertedId, agent: selectedAgent, floorTypes: selectedFloorTypes, scheduleDate: selectedDate }]);
-        setSelectedAgent('');
-        setSelectedDate(undefined);
-        setSelectedFloorTypes([])
+        setAppointments([...appointments, { _id: response.insertedId, agent: appointment['agent'], floorTypes: appointment['floorTypes'], scheduleDate: appointment['scheduleDate'] }]);
       }
     })
     .catch(error => console.log(error));
@@ -148,7 +144,12 @@ const Appointment: React.FC = () => {
         const index = appointments.map(appointment => appointment['_id']).indexOf(appointment['_id']);
         appointments[index] = appointment;
         setAppointments(appointments)
-        setAppointment({});
+        setAppointment({
+          _id: '',
+          agent: '',
+          scheduleDate: undefined,
+          floorTypes: []
+        });
       }
     })
     .catch(error => console.log(error));
@@ -212,9 +213,7 @@ const Appointment: React.FC = () => {
                     labelId="floor-type-label"
                     multiple
                     value={selectedFloorTypes}
-                    onChange={
-                      e => setSelectedFloorTypes(typeof e.target.value === 'string' ? [e.target.value] : e.target.value)
-                    }
+                    onChange={e => setSelectedFloorTypes(typeof e.target.value === 'string' ? [e.target.value] : e.target.value)}
                     input={<OutlinedInput label="Floor Type" />}
                     MenuProps={{
                       PaperProps: {
@@ -240,9 +239,8 @@ const Appointment: React.FC = () => {
                   <DatePicker
                     value={selectedDate}
                     sx={{width: '11rem'}}
-                    onChange={(e) => {
-                      setSelectedDate(e['$d']);
-                    }} />
+                    onChange={e => setSelectedDate(e)}
+                  />
                 </LocalizationProvider>
               </TableCell>
               <TableCell align='center'>
@@ -251,9 +249,7 @@ const Appointment: React.FC = () => {
                   <Select sx={{width: '20rem'}}
                     labelId="sale-agent-label"
                     value={selectedAgent}
-                    onChange={
-                      e => setSelectedAgent(e.target.value)
-                    }
+                    onChange={ e => setSelectedAgent(e.target.value) }
                     input={<OutlinedInput label="Floor Type" />}
                     MenuProps={{
                       PaperProps: {
@@ -309,8 +305,12 @@ const Appointment: React.FC = () => {
                 </TableCell>
                 <TableCell>
                   <Button variant='outlined' onClick={() => {
-                    console.log(appt);
-                    setAppointment(appt);
+                    setAppointment({
+                      _id: appt['_id'],
+                      agent: appt['agent'],
+                      floorTypes: appt['floorTypes'],
+                      scheduleDate: appt['scheduleDate']
+                    });
                     setShowModal(true);
                   }}>
                     UPDATE
@@ -334,7 +334,7 @@ const Appointment: React.FC = () => {
 
 const UpdateAppointmentDialog = ({appointment, agents, floorTypes, show, update, close}) => {
   const [agent, setAgent] = useState<string>(appointment['agent']);
-  const [date, setDate] = useState(dayjs(appointment['date']));
+  const [date, setDate] = useState(dayjs(appointment['scheduleDate']));
   const [types, setTypes] = useState(appointment['floorTypes']);
 
   return (
@@ -415,7 +415,6 @@ const UpdateAppointmentDialog = ({appointment, agents, floorTypes, show, update,
       <DialogActions>
         <Button onClick={close}>Cancel</Button>
         <Button onClick={() => {
-          console.log(types);
             update({_id: appointment['_id'], agent: agent, scheduleDate: date, floorTypes: types});
             close();
           }}
