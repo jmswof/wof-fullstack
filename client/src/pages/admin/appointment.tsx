@@ -42,7 +42,7 @@ const Appointment: React.FC = () => {
   const [selection, setSelection] = useState(new Array(appointments.length).fill(''));
   const [selectedAgent, setSelectedAgent] = useState<string>('');
   const [selectedFloorTypes, setSelectedFloorTypes] = useState<string[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedDate, setSelectedDate] = useState(dayjs());
   const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
@@ -112,15 +112,15 @@ const Appointment: React.FC = () => {
         'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
       },
       body: JSON.stringify({
-        agent: appointment['agent'],
-        floorTypes: appointment['floorTypes'],
-        scheduleDate: appointment['scheduleDate']
+        agent: selectedAgent,
+        floorTypes: selectedFloorTypes,
+        scheduleDate: selectedDate
       })
     })
     .then(response => response.json())
     .then(response => {
       if (response.acknowledged && response.insertedId !== null) {
-        setAppointments([...appointments, { _id: response.insertedId, agent: appointment['agent'], floorTypes: appointment['floorTypes'], scheduleDate: appointment['scheduleDate'] }]);
+        setAppointments([...appointments, { _id: response.insertedId, agent: selectedAgent, floorTypes: selectedFloorTypes, scheduleDate: selectedDate }]);
       }
     })
     .catch(error => console.log(error));
@@ -144,12 +144,7 @@ const Appointment: React.FC = () => {
         const index = appointments.map(appointment => appointment['_id']).indexOf(appointment['_id']);
         appointments[index] = appointment;
         setAppointments(appointments)
-        setAppointment({
-          _id: '',
-          agent: '',
-          scheduleDate: undefined,
-          floorTypes: []
-        });
+        setAppointment({});
       }
     })
     .catch(error => console.log(error));
@@ -172,8 +167,6 @@ const Appointment: React.FC = () => {
     })
     .then(response => response.json())
     .then(response => {
-      console.log(response);
-      console.log(appointments);
       if (response.acknowledged && response.deletedCount === selection.length) {
         setAppointments([...appointments.filter(appointment => selection.indexOf(appointment['_id']) < 0)]);
         setSelection([]);
@@ -305,12 +298,7 @@ const Appointment: React.FC = () => {
                 </TableCell>
                 <TableCell>
                   <Button variant='outlined' onClick={() => {
-                    setAppointment({
-                      _id: appt['_id'],
-                      agent: appt['agent'],
-                      floorTypes: appt['floorTypes'],
-                      scheduleDate: appt['scheduleDate']
-                    });
+                    setAppointment(appt);
                     setShowModal(true);
                   }}>
                     UPDATE
