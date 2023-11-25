@@ -39,8 +39,8 @@ const ManageUsers: React.FC = () => {
       <Box display={'flex'} justifyContent={'center'}>
         <Typography variant='h3'>World of Floor Users</Typography>
       </Box>
-      <TableContainer>
-        <Table>
+      <TableContainer sx={{maxHeight: '70vh'}}>
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell>#</TableCell>
@@ -53,16 +53,15 @@ const ManageUsers: React.FC = () => {
           </TableHead>
           <TableBody>
             {users.map((user, userIndex) => (
-                <TableRow key={user['uid']}>
-                  <TableCell>{userIndex + 1}</TableCell>
-                  <TableCell>{user['email']}</TableCell>
-                  <TableCell>{user['emailVerified'] ? 'Yes' : 'No'}</TableCell>
-                  <TableCell>{user['disabled'] ? 'Yes' : 'No'}</TableCell>
-                  <TableCell>{user['creationTime']}</TableCell>
-                  <TableCell>{user['lastSignInTime']}</TableCell>
-                </TableRow>
-              )
-            )}
+              <TableRow key={user['uid']}>
+                <TableCell>{userIndex + 1}</TableCell>
+                <TableCell>{user['email']}</TableCell>
+                <TableCell>{user['emailVerified'] ? 'Yes' : 'No'}</TableCell>
+                <TableCell>{user['disabled'] ? 'Yes' : 'No'}</TableCell>
+                <TableCell>{user['creationTime']}</TableCell>
+                <TableCell>{user['lastSignInTime']}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
           <TableFooter>
             <TableRow>

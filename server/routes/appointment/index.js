@@ -9,8 +9,9 @@ const initRest = (app, route) => {
 
     // GET /appointments (READ)
     app.get(route, cors(), async (request, response) => {
-      response.json(await appointments.find().toArray());
-      console.log(`[HTTP][GET] ${route}: shared appointments[${appointments.length}] to ${request.token.email}`);
+      const data = await appointments.find().toArray();
+      response.json(data);
+      console.log(`[HTTP][GET] ${route}: shared appointments[${data.length}] to ${request.token.email}`);
     });
 
     // POST /appointments (CREATE)
@@ -26,7 +27,12 @@ const initRest = (app, route) => {
 
     // DELETE /appointments (DELETE)
     app.delete(route, cors(), async (request, response) => {
-      console.log(`[HTTP][DELETE] ${route}: ${request.token.email} not implemented yet`);
+      response.json(
+        await appointments.deleteMany({
+          _id: { $in: request.body.map(id => (new ObjectId(id))) }
+        })
+      );
+      console.log(`[HTTP][DELETE] ${route}: ${request.token.email} deleted ${request.body.length} appointment(s).`);
     });
 
     console.log(`[INIT][HTTP] ${route}`);

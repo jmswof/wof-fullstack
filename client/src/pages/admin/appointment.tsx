@@ -8,13 +8,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
-import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Paper from '@mui/material/Paper';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -30,58 +28,20 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import dayjs = require('dayjs');
 
 const Appointment: React.FC = () => {
   document.title = 'World of Floors - Appointments';
 
   const {user} = useAuthContext();
   const [agents, setAgents] = useState<[]>([]);
-  const [selectedAgent, setSelectedAgent] = useState<string>('');
   const [floorTypes, setFloorTypes] = useState<[]>([]);
+  const [selectedAgent, setSelectedAgent] = useState<string>('');
   const [selectedFloorTypes, setSelectedFloorTypes] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
+
   const [appointments, setAppointments] = useState<object[]>([]);
   const [selection, setSelection] = useState(new Array(appointments.length).fill(''));
-
-  const handleSelection = (e:FormEvent<HTMLInputElement>, id:string):void => {
-    const index = selection.indexOf(id);
-    if (index < 0)
-      selection.push(id);
-    else
-      selection.splice(index, 1);
-
-    setSelection([...selection]);
-  }
-
-  const submitCreate = ():void => {
-
-    fetch(`${process.env.WOF_SERVER}/appointments`, {
-      method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-      },
-      body: JSON.stringify({
-        agent: selectedAgent,
-        floorTypes: selectedFloorTypes,
-        scheduleDate: selectedDate
-      })
-    })
-    .then(response => response.json())
-    .then(response => {
-      console.log(response);
-      if (response.acknowledged && response.insertedId !== null) {
-        setAppointments([...appointments, { _id: response.insertedId, agent: selectedAgent, floorTypes: selectedFloorTypes, scheduleDate: selectedDate }]);
-        setSelectedAgent('');
-        setSelectedDate(undefined);
-        setSelectedFloorTypes([])
-      }
-    })
-    .catch(error => console.log(error));
-  };
 
   useEffect(() => {
     Promise.all([
@@ -123,18 +83,89 @@ const Appointment: React.FC = () => {
       console.log(error);
     })
   }, []);
+
+  const handleSelection = (e:FormEvent<HTMLInputElement>, id:string):void => {
+    const index = selection.indexOf(id);
+    if (index < 0)
+      selection.push(id);
+    else
+      selection.splice(index, 1);
+
+    setSelection([...selection]);
+  }
+
+  const submitCreate = ():void => {
+
+    if (!selectedAgent || !selectedDate || selectedFloorTypes.length < 1) {
+      return;
+    }
+
+    fetch(`${process.env.WOF_SERVER}/appointments`, {
+      method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+      },
+      body: JSON.stringify({
+        agent: selectedAgent,
+        floorTypes: selectedFloorTypes,
+        scheduleDate: selectedDate
+      })
+    })
+    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+      if (response.acknowledged && response.insertedId !== null) {
+        setAppointments([...appointments, { _id: response.insertedId, agent: selectedAgent, floorTypes: selectedFloorTypes, scheduleDate: selectedDate }]);
+        setSelectedAgent('');
+        setSelectedDate(undefined);
+        setSelectedFloorTypes([])
+      }
+    })
+    .catch(error => console.log(error));
+  };
+
+  const submitDelete = ():void => {
+    if (selection.length < 1)
+      return;
+
+    fetch(`${process.env.WOF_SERVER}/appointments`, {
+      method: 'DELETE',
+      mode: 'cors',
+      cache: 'no-cache',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+      },
+      body: JSON.stringify(selection)
+    })
+    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+      console.log(appointments);
+      if (response.acknowledged && response.deletedCount === selection.length) {
+        setAppointments([...appointments.filter(appointment => selection.indexOf(appointment['_id']) < 0)]);
+        setSelection([]);
+      }
+    })
+    .catch(error => console.log(error));
+  };
   
   return (
     <Container component={Paper} sx={{my: 5, p: 2}}>
       <Box display={'flex'} justifyContent={'center'}>
         <Typography variant='h3'>Schedule Management</Typography>
       </Box>
-      <TableContainer>
-        <Table>
+      <TableContainer sx={{maxHeight: '70vh'}}>
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell align='center'>
-                <Button>
+                <Button onClick={submitDelete}>
                   <DeleteForeverIcon />
                 </Button>
               </TableCell>
@@ -171,9 +202,12 @@ const Appointment: React.FC = () => {
               </TableCell>
               <TableCell align='center'>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DatePicker sx={{width: '11rem'}} onChange={(e) => {
-                    setSelectedDate(e['$d']);
-                  }} />
+                  <DatePicker
+                    value={selectedDate}
+                    sx={{width: '11rem'}}
+                    onChange={(e) => {
+                      setSelectedDate(e['$d']);
+                    }} />
                 </LocalizationProvider>
               </TableCell>
               <TableCell align='center'>
@@ -235,7 +269,7 @@ const Appointment: React.FC = () => {
                   )}
                   </List>
                 </TableCell>
-                <TableCell>{appt['scheduleDate'].toLocaleString()}</TableCell>
+                <TableCell>{dayjs(appt['scheduleDate']).toString()}</TableCell>
                 <TableCell colSpan={2}>{agents.find(agent => appt['agent'] === agent['uid'])['email']}</TableCell>
               </TableRow>
             ))}
@@ -252,5 +286,29 @@ const Appointment: React.FC = () => {
     </Container>
   );
 };
+
+const UpdateAppointmentModal = ({appointment, open, update, close}) => {
+  const [appt, setAppt] = useState(appointment);
+
+  return (
+    <Dialog open={open} onClose={close}>
+      <DialogTitle>Edit Appointment</DialogTitle>
+      <DialogContent>
+        <TextField label='Agent'
+          variant='standard'
+          value={appt['agent']}
+          onChange={(e) => {
+            appt['agent'] = e.target.value;
+            setAppt(appt);
+          }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={close}>Cancel</Button>
+        <Button onClick={() => update(appt)}>Update</Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
 
 export default Appointment;

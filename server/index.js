@@ -29,7 +29,7 @@ const verifyToken = async (request, response, next) => {
     response.sendStatus(200);
   } else if (typeof bearerHeader !== 'undefined') {
     const bearerToken = atob(request.headers.authorization.split(' ')[1]);
-    await admin.auth().verifyIdToken(bearerToken)
+    await admin.auth().verifyIdToken(bearerToken, true)
       .then(token => {
         console.log(`[HTTP][${request.method}] ${request.url}: verified token`);
         request.token = token;
@@ -38,7 +38,7 @@ const verifyToken = async (request, response, next) => {
       .catch(error => {
         request.token = null;
         console.log(`[MIDDLEWARE][AWAIT] ${request.url} ${error}`);
-        response.sendStatus(403);
+        response.sendStatus(401);
       });
   } else {
     console.log(`[MIDDLEWARE][${request.method}] ${request.url} response with 400 Bad Request`);

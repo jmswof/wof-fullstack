@@ -148,11 +148,11 @@ const FloorType: React.FC = () => {
           update={submitUpdate}
         />
       }
-      <TableContainer>
+      <TableContainer sx={{maxHeight: '70vh'}}>
         <Box display={'flex'} justifyContent={'center'}>
           <Typography variant='h3'>Floor Types</Typography>
         </Box>
-        <Table>
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell align='center'>
