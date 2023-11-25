@@ -22,7 +22,16 @@ const initRest = (app, route) => {
 
     // PATCH /appointments (UPDATE)
     app.patch(route, cors(), async (request, response) => {
-      console.log(`[HTTP][PATCH] ${route}: ${request.token.email} not implemented yet`);
+      response.json(await appointments.updateOne(
+        {_id: new ObjectId(request.body._id)},
+        { $set: { 
+          agent: request.body.agent,
+          floorTypes: request.body.floorTypes,
+          scheduleDate: request.body.scheduleDate
+        }},
+        {}
+      ));
+      console.log(`[HTTP][PATCH] ${route}: ${request.token.email} updated an appointment.`);
     });
 
     // DELETE /appointments (DELETE)

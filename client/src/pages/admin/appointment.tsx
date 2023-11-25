@@ -36,12 +36,14 @@ const Appointment: React.FC = () => {
   const {user} = useAuthContext();
   const [agents, setAgents] = useState<[]>([]);
   const [floorTypes, setFloorTypes] = useState<[]>([]);
+  const [appointments, setAppointments] = useState<object[]>([]);
+  const [appointment, setAppointment] = useState<object>({});
+
+  const [selection, setSelection] = useState(new Array(appointments.length).fill(''));
   const [selectedAgent, setSelectedAgent] = useState<string>('');
   const [selectedFloorTypes, setSelectedFloorTypes] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
-
-  const [appointments, setAppointments] = useState<object[]>([]);
-  const [selection, setSelection] = useState(new Array(appointments.length).fill(''));
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     Promise.all([
@@ -128,6 +130,30 @@ const Appointment: React.FC = () => {
     .catch(error => console.log(error));
   };
 
+  const submitUpdate = (appointment:object):void => {
+    fetch(`${process.env.WOF_SERVER}/appointments`, {
+      method: 'PATCH',
+      mode: 'cors',
+      cache: 'no-cache',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+      },
+      body: JSON.stringify(appointment)
+    })
+    .then(response => response.json())
+    .then(response => {
+      if (response.acknowledged && response.matchedCount === 1) {
+        const index = appointments.map(appointment => appointment['_id']).indexOf(appointment['_id']);
+        appointments[index] = appointment;
+        setAppointments(appointments)
+        setAppointment({});
+      }
+    })
+    .catch(error => console.log(error));
+  }
+
   const submitDelete = ():void => {
     if (selection.length < 1)
       return;
@@ -161,6 +187,15 @@ const Appointment: React.FC = () => {
         <Typography variant='h3'>Schedule Management</Typography>
       </Box>
       <TableContainer sx={{maxHeight: '70vh'}}>
+        {showModal && <UpdateAppointmentDialog show={showModal}
+          appointment={appointment}
+          agents={agents}
+          floorTypes={floorTypes}
+          update={submitUpdate}
+          close={() => {
+            setShowModal(false);
+          }}
+        />}
         <Table stickyHeader>
           <TableHead>
             <TableRow>
@@ -239,7 +274,7 @@ const Appointment: React.FC = () => {
                   </Select>
                 </FormControl>
               </TableCell>
-              <TableCell align='center'>
+              <TableCell align='center' colSpan={2}>
                 <Button variant='contained' onClick={submitCreate}>
                   <Typography>Create</Typography>
                 </Button>
@@ -247,15 +282,12 @@ const Appointment: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {appointments.map((appt, apptIndex) => (
+            { appointments.map((appt, apptIndex) => (
               <TableRow key={apptIndex}>
                 <TableCell>
                   <Checkbox
-                    onChange={
-                      (e:FormEvent<HTMLInputElement>):void => handleSelection(e, appt['_id'])
-                    }
-                    checked={
-                      selection.some(id => id === appt['_id'])}
+                    onChange={ (e:FormEvent<HTMLInputElement>):void => handleSelection(e, appt['_id']) }
+                    checked={ selection.some(id => id === appt['_id']) }
                     />
                 </TableCell>
                 <TableCell>
@@ -269,8 +301,21 @@ const Appointment: React.FC = () => {
                   )}
                   </List>
                 </TableCell>
-                <TableCell>{dayjs(appt['scheduleDate']).toString()}</TableCell>
-                <TableCell colSpan={2}>{agents.find(agent => appt['agent'] === agent['uid'])['email']}</TableCell>
+                <TableCell>
+                  { dayjs(appt['scheduleDate']).toString() }
+                </TableCell>
+                <TableCell colSpan={2}>
+                  { agents.find(agent => appt['agent'] === agent['uid'])['email'] }
+                </TableCell>
+                <TableCell>
+                  <Button variant='outlined' onClick={() => {
+                    console.log(appt);
+                    setAppointment(appt);
+                    setShowModal(true);
+                  }}>
+                    UPDATE
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -287,25 +332,94 @@ const Appointment: React.FC = () => {
   );
 };
 
-const UpdateAppointmentModal = ({appointment, open, update, close}) => {
-  const [appt, setAppt] = useState(appointment);
+const UpdateAppointmentDialog = ({appointment, agents, floorTypes, show, update, close}) => {
+  const [agent, setAgent] = useState<string>(appointment['agent']);
+  const [date, setDate] = useState(dayjs(appointment['date']));
+  const [types, setTypes] = useState(appointment['floorTypes']);
 
   return (
-    <Dialog open={open} onClose={close}>
+    <Dialog open={show} onClose={close}>
       <DialogTitle>Edit Appointment</DialogTitle>
-      <DialogContent>
-        <TextField label='Agent'
-          variant='standard'
-          value={appt['agent']}
-          onChange={(e) => {
-            appt['agent'] = e.target.value;
-            setAppt(appt);
-          }}
-        />
+      <DialogContent sx={{p: 2}}>
+        <Box sx={{m: 2}}>
+          <FormControl>
+            <InputLabel id="floor-type-label">Floor Type</InputLabel>
+            <Select
+              sx={{ width: '13rem'}}
+              labelId="floor-type-label"
+              multiple
+              value={types}
+              onChange={
+                e => setTypes(typeof e.target.value === 'string' ? [e.target.value] : e.target.value)
+              }
+              input={<OutlinedInput label="Floor Type" />}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    margin: 0
+                  },
+                },
+              }}
+            >
+              {floorTypes.map((floorType:object) => (
+                <MenuItem
+                  key={floorType['_id']}
+                  value={floorType['_id']}
+                >
+                  {floorType['name']}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+        <Box sx={{m: 2}}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              value={date}
+              sx={{width: '11rem'}}
+              onChange={(date) => {
+                setDate(date);
+              }} />
+          </LocalizationProvider>
+        </Box>
+        <Box sx={{m: 2}}>
+          <FormControl>
+            <InputLabel id="sale-agent-label">Sale Agent</InputLabel>
+            <Select sx={{width: '20rem'}}
+              labelId="sale-agent-label"
+              value={agent}
+              onChange={
+                e => setAgent(e.target.value)
+              }
+              input={<OutlinedInput label="Floor Type" />}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    margin: 0
+                  },
+                },
+              }}
+            >
+              {agents.map((agent) => (
+                <MenuItem
+                  key={agent['uid']}
+                  value={agent['uid']}
+                >
+                  {agent['email']}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={close}>Cancel</Button>
-        <Button onClick={() => update(appt)}>Update</Button>
+        <Button onClick={() => {
+          console.log(types);
+            update({_id: appointment['_id'], agent: agent, scheduleDate: date, floorTypes: types});
+            close();
+          }}
+        >Update</Button>
       </DialogActions>
     </Dialog>
   );
