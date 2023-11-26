@@ -48,10 +48,12 @@ const initRest = (app, route) => {
     app.delete(route, cors(), async (request, response) => {
       console.log(`[HTTP][DELETE] ${route}: not implemented yet`);
     });
-
-    console.log(`[INIT][HTTP] ${route}`);
 };
 
-const initUsers = (app, route) => initRest(app, route);
+const initUsers = (app, route) => {
+  initRest(app, route)
+
+  return {stage: 'INIT', http: 'HTTP', ws: null, route: route};
+};
 
 module.exports = { initUsers };

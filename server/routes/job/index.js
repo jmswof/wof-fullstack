@@ -4,7 +4,6 @@ const { MongoClient, ObjectId } = require("mongodb");
 const dbURL = process.env.WOF_DATABASE;
 const client = new MongoClient(dbURL, { family: 4 /* Node 17+ requirement */ });
 const database = client.db('world-of-floors');
-const products = database.collection('products');
 
 const initWs = (socketio, route) => {
 
@@ -13,7 +12,8 @@ const initWs = (socketio, route) => {
   nsp.on('connection', async (socket) => {
     await admin.auth().verifyIdToken(socket.handshake.auth.token)
       .then(async token => {
-        // console.log(token);
+        console.log(token);
+        db.test.find({"_id" : ObjectId("4ecc05e55dd98a436ddcc47c")}) 
         socket.emit('list', await products.find().toArray());
         console.log(`[WS][CONNECTION] ${route}: verified token, emit jobs payload to socket::list ${socket.id}`);
         console.log(`[WS][CONNECTION] ${route}: current clients size: ${nsp.sockets.size}`);
@@ -45,35 +45,23 @@ const initRest = (wss, app, route) => {
 
     // GET /jobs (READ)
     app.get(route, cors(), async (request, response, next) => {
-        response.json(await products.find().toArray());
+        console.log(request.body);
     });
 
     // POST /jobs (CREATE)
     app.post(route, cors(), async (request, response, next) => {
       console.log(request.body);
-      response.json(await products.insertOne(request.body));
     });
 
     // PATCH /jobs (UPDATE)
     app.patch(route, cors(), async (request, response, next) => {
       console.log(request.body);
-      response.json(await products.updateOne(
-        {_id: new ObjectId(request.body._id)},
-        { $set: { name: request.body.name, cost: request.body.cost}},
-        {}
-      ));
     });
 
     // DELETE /jobs (DELETE)
     app.delete(route, cors(), async (request, response, next) => {
-      response.json(
-        await products.deleteMany({
-          _id: { $in: request.body.map(id => (new ObjectId(id))) }
-        })
-      );
+      console.log(request.body);
     });
-
-    console.log(`[INIT][HTTP][WS] ${route}`);
 };
 
 const initJobs = (socketio, app, route) => {
@@ -82,6 +70,8 @@ const initJobs = (socketio, app, route) => {
     app,
     route
   );
+
+  return {stage: 'INIT', http: 'HTTP', ws: 'WS', route: route};
 };
 
 module.exports = { initJobs };

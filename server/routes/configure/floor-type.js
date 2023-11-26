@@ -41,10 +41,12 @@ const initRest = (app, route) => {
       );
       console.log(`[HTTP][DELETE] ${route}: ${request.token.email} deleted ${request.body.length} floor type(s).`);
     });
-
-    console.log(`[INIT][HTTP] ${route}`);
 };
 
-const initFloorType = (app, route) => initRest(app, route);
+const initFloorType = (app, route) => {
+  initRest(app, route);
+
+  return {stage: 'INIT', http: 'HTTP', ws: null, route: route};
+};
 
 module.exports = { initFloorType };

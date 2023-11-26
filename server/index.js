@@ -55,15 +55,20 @@ app.use(require('cors')()); // CORS because we're on different port :(
  * FE use firebase to create token and attach to request header as bearer token. 
  * BE use firebase-admin to verify request header that has bearer token.
  */
+const inits = {
+  product: initProducts(socketio, app, '/products'),
+  job: initJobs(socketio, app, '/jobs'),
+  user: initUsers(app, '/users'),
+  floorType: initFloorType(app, '/configure/floor-type'),
+  appointment: initAppointments(socketio, app, '/appointments')
+};
 
-initProducts(socketio, app, '/products');
-initJobs(socketio, app, '/jobs');
-initUsers(app, '/users');
-initFloorType(app, '/configure/floor-type');
-initAppointments(app, '/appointments');
 //initDevices(server, app);
-
 server.listen(port, () => {
-  console.log(`[INIT] CORS-enabled web server on ${port}.`);
-  console.log(`[INIT] WOF Database ${dbURL}`);
+  console.table({
+    express: {stage: 'INIT', http: 'HTTP', ws: 'WS', route: `http://localhost:${port}/*`},
+    mongoDB: {stage: 'INIT', http: null, ws: null, route: dbURL}
+  });
+
+  console.table(inits);
 });

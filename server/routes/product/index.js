@@ -80,8 +80,6 @@ const initRest = (wss, app, route) => {
       client.send(t);
     });
   });
-
-  console.log(`[INIT][HTTP][WS] ${route}`);
 };
 
 const initProducts = (socketio, app, route) => {
@@ -90,6 +88,8 @@ const initProducts = (socketio, app, route) => {
     app,
     route
   );
+
+  return {stage: 'INIT', http: 'HTTP', ws: 'WS', route: route};
 };
 
 module.exports = { initProducts };
