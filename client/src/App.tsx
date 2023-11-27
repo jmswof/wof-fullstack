@@ -24,6 +24,7 @@ import SaleAgent from './pages/admin/sales-agent';
 import CancelAppointment from './pages/admin/appointment/cancel-appointment';
 import ListAppointment from './pages/admin/appointment/list-appointment';
 import ManageAppointment from './pages/admin/appointment/manage-appointment';
+import CostRate from './pages/configure/cost-rate';
 
 // https://reactrouter.com/en/main/routers/picking-a-router
 // TODO: Update to use createBrowserRouter
@@ -47,6 +48,7 @@ const App: React.FC = () => {
           <Route path='/admin/list-appointment' element={<ListAppointment />} />
           <Route path='/admin/appointment/:appointmentId?' element={<ManageAppointment />} />
           <Route path='/config/site-option' element={<SiteOption />} />
+          <Route path='/config/cost-rate' element={<CostRate />} />
           <Route path='/config/sale-agent' element={<SaleAgent />} />
           <Route path='/tracking' element={<Tracking />} />
           <Route path='/reports' element={<Reports />} />

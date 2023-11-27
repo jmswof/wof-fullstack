@@ -67,30 +67,20 @@ const Admin: React.FC = () => {
         <Button sx={{m: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>View/Edit Service Area</Typography>
         </Button>
+      </Box>
+
+      <Typography variant='h5'>Configuration</Typography>
+      <Divider sx={{borderBottomWidth: 4}} />
+      <Box display={'flex'} flexWrap={'wrap'} sx={{my: 3}}>
         <Button sx={{m: 1, boxShadow: 3}} variant='contained'
             onClick={() => navigate('/config/site-option')}
           >
           <Typography variant='caption'>Site Option</Typography>
         </Button>
-      </Box>
-
-      <Typography variant='h5'>Pricing</Typography>
-      <Divider sx={{borderBottomWidth: 4}} />
-      <Box display={'flex'} sx={{my: 3}}>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
-          <Typography variant='caption'>Labor Rates</Typography>
-        </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
-          <Typography variant='caption'>Product Costs</Typography>
-        </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
-          <Typography variant='caption'>Product Pricing</Typography>
-        </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
-          <Typography variant='caption'>Financing</Typography>
-        </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
-          <Typography variant='caption'>Accessory Product Pricing</Typography>
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained'
+            onClick={() => navigate('/config/cost-rate')}
+          >
+          <Typography variant='caption'>Costs and Rates</Typography>
         </Button>
       </Box>
 
