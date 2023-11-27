@@ -34,7 +34,7 @@ const ManageAppointment: React.FC = () => {
 
   const [active, setActive] = useState<boolean>(true);
   const [agent, setAgent] = useState<string>('');
-  const [date, setDate] = useState(dayjs());
+  const [date, setDate] = useState(dayjs(new Date()));
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [street1, setStreet1] = useState<string>('');
@@ -126,7 +126,7 @@ const ManageAppointment: React.FC = () => {
         _id: '0', firstName: 'Unassign', lastName: '', active: false, firebase: {}
       }].concat(saleAgents));
       setAppointment(appointment);
-      setAppointment(dayjs(appointment['date']));
+      setDate(dayjs(appointment['date']));
       setFirstName(appointment['customer']['firstName']);
       setLastName(appointment['customer']['lastName']);
       setMobileNumber(appointment['customer'].mobileNumber);

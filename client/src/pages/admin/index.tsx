@@ -25,10 +25,10 @@ const Admin: React.FC = () => {
         <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Project Coordinator Dashboard</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'
+        <Button sx={{mx: 1, boxShadow: 3}} variant='text'
           onClick={() => navigate('/admin/command-center')}
         >
-          <Typography variant='caption'>Command Center</Typography>
+          <Typography variant='caption'>Command Center (DEMO)</Typography>
         </Button>
         <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Recovery Center</Typography>
@@ -44,22 +44,22 @@ const Admin: React.FC = () => {
       <Typography variant='h5'>Scheduling</Typography>
       <Divider sx={{borderBottomWidth: 4}} />
       <Box display={'flex'} flexWrap={'wrap'} sx={{my: 3}}>
-        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained'
             onClick={() => navigate('/admin/new-appointment')}
           >
           <Typography variant='caption'>Schedule New Appointment</Typography>
         </Button>
-        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained'
             onClick={() => navigate('/admin/delegate-appointment')}
           >
           <Typography variant='caption'>Delegate Appointment</Typography>
         </Button>
-        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained'
             onClick={() => navigate('/admin/list-appointment')}
           >
           <Typography variant='caption'>List Appointments</Typography>
         </Button>
-        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained'
             onClick={() => navigate('/admin/cancel-appointment')}
           >
           <Typography variant='caption'>Cancel Appointment</Typography>
@@ -67,7 +67,7 @@ const Admin: React.FC = () => {
         <Button sx={{m: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>View/Edit Service Area</Typography>
         </Button>
-        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained'
             onClick={() => navigate('/config/site-option')}
           >
           <Typography variant='caption'>Site Option</Typography>
@@ -103,12 +103,12 @@ const Admin: React.FC = () => {
         <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Contractor Rate Settings</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'
+        <Button sx={{mx: 1, boxShadow: 3}} variant='contained'
           onClick={() => navigate('/config/sale-agent')}
         >
           <Typography variant='caption'>Sales Agents</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'
+        <Button sx={{mx: 1, boxShadow: 3}} variant='contained'
           onClick={() => navigate('/admin/firebase-users')}
         >
           <Typography variant='caption'>Firebase Users</Typography>

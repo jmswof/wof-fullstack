@@ -36,7 +36,7 @@ const NewAppointment: React.FC = () => {
   const [lastName, setLastName] = useState<string>('');
   const [street1, setStreet1] = useState<string>('');
   const [city, setCity] = useState<string>('');
-  const [state, setState] = useState<string>('');
+  const [ustate, setUState] = useState<string>('');
   const [zipCode, setZipCode] = useState<string>('');
   const [mobileNumber, setMobileNumber] = useState<string>('');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
@@ -151,7 +151,7 @@ const NewAppointment: React.FC = () => {
           address: {
             street1: street1,
             city: city,
-            state: state,
+            ustate: ustate,
             zipCode: zipCode,
             isResidential: isResidential
           }
@@ -178,7 +178,7 @@ const NewAppointment: React.FC = () => {
         setEmail('');
         setStreet1('');
         setCity('');
-        setState('');
+        setUState('');
         setZipCode('');
         setIsResidential(true);
       }
@@ -208,7 +208,7 @@ const NewAppointment: React.FC = () => {
           <TextField label='City' value={city} size='small' onChange={e => setCity(e.target.value)} sx={{m:1}} />
           <FormControl sx={{m: 1, width: '13rem'}} size='small'>
             <InputLabel>State</InputLabel>
-            <Select value={state} onChange={ e => setState(e.target.value) }
+            <Select value={ustate} onChange={ e => setUState(e.target.value) }
               input={<OutlinedInput label="State" />}
             >
               {ustates.map( ustate => <MenuItem key={ustate['_id']} value={ustate['short']}>{ustate['label']}</MenuItem> )}
