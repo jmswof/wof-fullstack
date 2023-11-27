@@ -1,3 +1,4 @@
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -29,6 +30,8 @@ const NewAppointment: React.FC = () => {
   const [colors, setColors] = useState<[]>([]);
   const [priorities, setPriorities] = useState<[]>([]);
   const [appointments, setAppointments] = useState<object[]>([]);
+
+  const [error, setError] = useState('');
 
   // Customer Form Data
   const [date, setDate] = useState(dayjs());
@@ -117,8 +120,9 @@ const NewAppointment: React.FC = () => {
   }, []);
 
   const submitCreate = ():void => {
-
-    if (!date || floorTypes.length < 1) {
+    setError('');
+    if (!date || !firstName || !lastName || !street1 || !city || !ustate || !zipCode || !mobileNumber || !phoneNumber || !email || !priority.length || !reference.length || !floorTypes.length || !colorPreference.length || !internalNotes || !salesNotes || !totalRooms) {
+      setError('Empty form fields cannot be added.');
       return;
     }
 
@@ -192,6 +196,12 @@ const NewAppointment: React.FC = () => {
         <Typography variant='h3'>Schedule New Appointment</Typography>
         <Typography variant='caption'>{appointments.length} Total Appointments</Typography>
       </Box>
+      { error && <Box display={'flex'} sx={{m: 3}} justifyContent={'center'}>
+          <Alert variant='standard' color='error'>
+            <Typography>{error}</Typography>
+          </Alert>
+        </Box>
+        }
       <Box component={Paper} sx={{p:2}} elevation={4}>
         <Typography variant='h6'>Customer</Typography>
         <Box display={'flex'} flexDirection={'row'}>

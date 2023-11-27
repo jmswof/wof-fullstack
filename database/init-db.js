@@ -12,6 +12,92 @@ async function run() {
 
     results.push(
       await initialize(
+        db.collection('appointments'),
+        [
+          {
+            active: true,
+            agent: null,
+            date: '2023-12-30T17:08:04.000Z',
+            totalRooms: 5,
+            floorType: [ 'CP', 'LV', 'WD' ],
+            reference: [ 'SE', 'SM', 'PA', 'BB', 'TV', 'FI' ],
+            internalNotes: 'A new customer.',
+            salesNotes: 'Do not allow the customer to keep the demonstration materials at home. ',
+            colorPreference: [ 'ET', 'OR' ],
+            priority: [ 'CR', 'PR', 'SR', 'WP', 'CL', 'DR' ],
+            customer: {
+              firstName: 'Homer',
+              lastName: 'Simpson',
+              mobileNumber: '586-555-6832',
+              phoneNumber: '800-555-6752',
+              email: 'homer@simpson.com',
+              address: {
+                street1: '742 Evergreen Terrace',
+                city: 'Springfield',
+                ustate: 'CA',
+                zipCode: '90210',
+                isResidential: true
+              }
+            }
+          },
+          {
+            active: true,
+            agent: null,
+            date: '2023-12-24T17:08:04.000Z',
+            totalRooms: 3,
+            floorType: [ 'CP', 'LM' ],
+            reference: [ 'RC', 'HA', 'PF', 'FI' ],
+            internalNotes: 'One of our favorites.',
+            salesNotes: 'Allow the customer to keep the demonstration materials at home for as long as needed.',
+            colorPreference: [ 'TP', 'OR' ],
+            priority: [ 'CL', 'PR' ],
+            customer: {
+              firstName: 'Ned',
+              lastName: 'Flanders',
+              mobileNumber: '502-555-7823',
+              phoneNumber: '586-555-8904',
+              email: 'ned@flanders.com',
+              address: {
+                street1: '740 Evergreen Terrace',
+                city: 'Springfield',
+                ustate: 'CA',
+                zipCode: '90210',
+                isResidential: true
+              }
+            }
+          },
+          {
+            active: true,
+            agent: null,
+            date: '2023-12-15T17:08:04.000Z',
+            totalRooms: 15,
+            floorType: [ 'CP', 'LM', 'TL' ],
+            reference: [ 'RC' ],
+            internalNotes: 'This is not residential address.',
+            salesNotes: '15+ potential rooms.',
+            colorPreference: [ 'TP', 'OR' ],
+            priority: [ 'CL', 'PR', 'DR', 'SR' ],
+            customer: {
+              firstName: 'Monty',
+              lastName: 'Burns',
+              mobileNumber: '502-401-8678',
+              phoneNumber: '800-555-5246',
+              email: 'ceo@nuclear.com',
+              address: {
+                street1: '100 Industrial Way',
+                city: 'Springfield',
+                ustate: 'CA',
+                zipCode: '90212',
+                isResidential: false
+              }
+            }
+          },
+        ]
+      )
+    )
+
+    results.push(
+      await initialize(
         db.collection('colors'),
         [
           { label: 'Gray', short: 'GR', active: true },
