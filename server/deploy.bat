@@ -5,6 +5,7 @@ CALL pm2 delete wof-express
 DEL D:\server\Apache24\sites\wof-server\index.js
 DEL D:\server\Apache24\sites\wof-server\*.json
 DEL D:\server\Apache24\sites\wof-server\.env
+RMDIR /S /Q D:\server\Apache24\sit\wof-server\routes
 RMDIR /S /Q D:\server\Apache24\sites\wof-server\node_modules
 COPY index.js D:\server\Apache24\sites\wof-server
 COPY package.json D:\server\Apache24\sites\wof-server
