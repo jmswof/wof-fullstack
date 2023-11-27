@@ -10,8 +10,10 @@ const { initAppointments } = require('./routes/appointment');
 const { initReference } = require('./routes/configure/reference');
 const { initColor } = require('./routes/configure/color');
 const { initPriority } = require('./routes/configure/priority');
+const { initLaborType } = require('./routes/configure/labor-type');
 const { initUState } = require('./routes/configure/us-state');
 const { initSaleAgent } = require('./routes/configure/sale-agent');
+const { initVendor } = require('./routes/configure/vendor');
 // const { initDevices } = require('./routes/device');
 
 const express = require('express');
@@ -63,13 +65,15 @@ app.use(require('cors')()); // CORS because we're on different port :(
 const inits = {
   product: initProducts(socketio, app, '/products'),
   job: initJobs(socketio, app, '/jobs'),
-  firebaseUser: initFirebaseUser(app, '/configure/firebase-user'),
-  floorType: initFloorType(app, '/configure/floor-type'),
+  'firebase-user': initFirebaseUser(app, '/configure/firebase-user'),
+  'floor-type': initFloorType(app, '/configure/floor-type'),
   reference: initReference(app, '/configure/reference'),
   color: initColor(app, '/configure/color'),
+  'labor-type': initLaborType(app, '/configure/labor-type'),
   priority: initPriority(app, '/configure/priority'),
-  ustate: initUState(app, '/configure/us-state'),
-  saleAgent: initSaleAgent(app, '/configure/sale-agent'),
+  'us-state': initUState(app, '/configure/us-state'),
+  'sale-agent': initSaleAgent(app, '/configure/sale-agent'),
+  vendor: initVendor(app, '/configure/vendor'),
   appointment: initAppointments(socketio, app, '/appointments')
 };
 

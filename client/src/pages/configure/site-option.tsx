@@ -11,6 +11,8 @@ import Color from './option/color';
 import Priority from './option/priority';
 import USStates from './option/us-states';
 import { useState } from 'react';
+import LaborType from './option/labor-type';
+import Vendor from './option/vendor';
 
 const SiteOption: React.FC = () => {
   document.title = 'World of Floors - Site Option';
@@ -19,7 +21,9 @@ const SiteOption: React.FC = () => {
     1:'Reference',
     2:'Color',
     3:'Priority',
-    4:'US States'
+    4:'US States',
+    5: 'Labor Type',
+    6: 'Vendor'
   };
 
   const [index, setIndex] = useState(0);
@@ -37,6 +41,8 @@ const SiteOption: React.FC = () => {
         <Tab label='Color' />
         <Tab label='Priority' />
         <Tab label='US States' />
+        <Tab label='Labor Type' />
+        <Tab label='Vendor' />
       </Tabs>
 
       {views[index] === 'Floor Type' && <FloorType />}
@@ -44,6 +50,8 @@ const SiteOption: React.FC = () => {
       {views[index] === 'Color' && <Color />}
       {views[index] === 'Priority' && <Priority />}
       {views[index] === 'US States' && <USStates />}
+      {views[index] === 'Labor Type' && <LaborType />}
+      {views[index] === 'Vendor' && <Vendor />}
 
     </Container>
   );

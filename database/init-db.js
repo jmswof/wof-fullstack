@@ -168,6 +168,41 @@ async function run() {
 
     results.push(
       await initialize(
+        db.collection('vendors'),
+        [
+          { label: 'Cali', short: 'CL', active: true },
+          { label: 'DreamWeaver', short: 'DW', active: true },
+          { label: 'Rong Gean', short: 'RG', active: true },
+          { label: 'CDC', short: 'CD', active: true },
+          { label: 'LWM', short: 'LW', active: true },
+          { label: 'Engineered', short: 'EN', active: true },
+          { label: 'WF', short: 'WF', active: true },
+          { label: 'Nature', short: 'NA', active: true }
+        ]
+      )
+    );
+
+    results.push(
+      await initialize(
+        db.collection('labor-types'),
+        [
+          { label: 'Floor Prep', short: 'FP', active: true },
+          { label: 'Furniture', short: 'FN', active: true },
+          { label: 'Installation', short: 'IN', active: true },
+          { label: 'Installation Upcharge', short: 'IU', active: true },
+          { label: 'Miscellaneous', short: 'MC', active: true },
+          { label: 'New Wall Finish', short: 'NF', active: true },
+          { label: 'Rip-Up & Haul Away', short: 'RH', active: true },
+          { label: 'R&R', short: 'RR', active: true },
+          { label: 'Stair Accessories', short: 'SA', active: true },
+          { label: 'Steps', short: 'SP', active: true },
+          { label: 'Transition', short: 'TN', active: true }
+        ]
+      )
+    );
+
+    results.push(
+      await initialize(
         db.collection('us-states'),
         [
           { label: 'Alabama', short: 'AL', active: true },

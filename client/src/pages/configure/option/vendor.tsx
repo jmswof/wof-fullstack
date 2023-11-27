@@ -4,17 +4,17 @@ import { useAuthContext } from '../../../context/AuthContext';
 import { useEffect, useState } from 'react';
 import { Alert, Button, Checkbox, FormControl, FormControlLabel, FormHelperText, Input, InputLabel, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material';
 
-const LaborRate: React.FC = () => {
-  document.title = 'World of Floors - Labor Rate';
+const Vendor: React.FC = () => {
+  document.title = 'World of Floors - Vendor';
   const {user} = useAuthContext();
-  const [colors, setColors] = useState<object[]>([]);
+  const [vendors, setVendors] = useState<object[]>([]);
   const [label, setLabel] = useState<string>('');
   const [short, setShort] = useState<string>('');
   const [active, setActive] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-      fetch(`${process.env.WOF_SERVER}/configure/color?type=all`, {
+      fetch(`${process.env.WOF_SERVER}/configure/vendor?type=all`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -23,7 +23,7 @@ const LaborRate: React.FC = () => {
       })
       .then(response => response.json())
       .then(response => {
-        setColors(response);
+        setVendors(response);
       })
       .catch(error => {
         console.log(error);
@@ -38,7 +38,7 @@ const LaborRate: React.FC = () => {
       return;
     }
 
-    fetch(`${process.env.WOF_SERVER}/configure/color`, {
+    fetch(`${process.env.WOF_SERVER}/configure/vendor`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -50,7 +50,7 @@ const LaborRate: React.FC = () => {
     .then(response => response.json())
     .then(response => {
       if (response.acknowledged === true && response.insertedId != null) {
-        setColors([...colors, {'_id': response.insertedId, 'label': label, 'short': short, 'active': active}]);
+        setVendors([...vendors, {'_id': response.insertedId, 'label': label, 'short': short, 'active': active}]);
         setActive(true);
         setLabel('');
         setShort('');
@@ -76,7 +76,7 @@ const LaborRate: React.FC = () => {
               <FormControl required>
                 <InputLabel>Label</InputLabel>
                 <Input value={label} onChange={(e) => setLabel(e.target.value)} />
-                <FormHelperText>New color to display</FormHelperText>
+                <FormHelperText>New Vendor to display</FormHelperText>
               </FormControl>
             </TableCell>
             <TableCell>
@@ -93,26 +93,26 @@ const LaborRate: React.FC = () => {
             </TableCell>
             <TableCell>
               <Button fullWidth variant='contained' onClick={submitCreate}>
-                <Typography>Create Color</Typography>
+                <Typography>Create Vendor</Typography>
               </Button>
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {colors.map((color, index) => {
+          {vendors.map((vendor, index) => {
             return (
             <TableRow key={index}>
               <TableCell>
-                <Typography variant='h6'>{color['label']}</Typography>
+                <Typography variant='h6'>{vendor['label']}</Typography>
               </TableCell>
               <TableCell>
-                <Typography>{color['short']}</Typography>
+                <Typography>{vendor['short']}</Typography>
               </TableCell>
               <TableCell>
-                <Typography>{color['active'] ? 'Yes' : 'No'}</Typography>
+                <Typography>{vendor['active'] ? 'Yes' : 'No'}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant='caption' fontSize={12}><pre>{JSON.stringify(color, null, 2)}</pre></Typography>
+                <Typography variant='caption' fontSize={12}><pre>{JSON.stringify(vendor, null, 2)}</pre></Typography>
               </TableCell>
             </TableRow>
             );
@@ -121,7 +121,7 @@ const LaborRate: React.FC = () => {
         <TableFooter>
           <TableRow>
             <TableCell align='center' colSpan={4}>
-              <Typography variant='caption'>{colors.length} Color(s)</Typography>
+              <Typography variant='caption'>{vendors.length} Vendor(s)</Typography>
             </TableCell>
           </TableRow>
         </TableFooter>
@@ -130,4 +130,4 @@ const LaborRate: React.FC = () => {
   );
 };
 
-export default LaborRate;
+export default Vendor;
