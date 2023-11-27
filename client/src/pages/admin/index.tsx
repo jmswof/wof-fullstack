@@ -18,32 +18,30 @@ const Admin: React.FC = () => {
 
       <Typography variant='h5'>Project Management</Typography>
       <Divider sx={{borderBottomWidth: 4}} />
-      <Box display={'flex'} sx={{my: 3}}>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+      <Box flexWrap='wrap' sx={{my: 3}}>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Projects</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Project Coordinator Dashboard</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='text'
-          onClick={() => navigate('/admin/command-center')}
-        >
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined' onClick={() => navigate('/admin/command-center')}>
           <Typography variant='caption'>Command Center (DEMO)</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Recovery Center</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Call Center</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Installation Calendar</Typography>
         </Button>
       </Box>
 
       <Typography variant='h5'>Scheduling</Typography>
       <Divider sx={{borderBottomWidth: 4}} />
-      <Box display={'flex'} flexWrap={'wrap'} sx={{my: 3}}>
+      <Box flexWrap='wrap' sx={{my: 3}}>
         <Button sx={{m: 1, boxShadow: 3}} variant='contained'
             onClick={() => navigate('/admin/new-appointment')}
           >
@@ -71,47 +69,36 @@ const Admin: React.FC = () => {
 
       <Typography variant='h5'>Configuration</Typography>
       <Divider sx={{borderBottomWidth: 4}} />
-      <Box display={'flex'} flexWrap={'wrap'} sx={{my: 3}}>
-        <Button sx={{m: 1, boxShadow: 3}} variant='contained'
-            onClick={() => navigate('/config/site-option')}
-          >
+      <Box flexWrap='wrap' sx={{my: 3}}>
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained' onClick={() => navigate('/config/site-option')}>
           <Typography variant='caption'>Site Option</Typography>
         </Button>
-        <Button sx={{m: 1, boxShadow: 3}} variant='contained'
-            onClick={() => navigate('/config/cost-rate')}
-          >
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined' onClick={() => navigate('/config/cost-rate')}>
           <Typography variant='caption'>Costs and Rates</Typography>
         </Button>
       </Box>
 
       <Typography variant='h5'>Employee Management</Typography>
       <Divider sx={{borderBottomWidth: 4}} />
-      <Box display={'flex'} sx={{my: 3}}>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
-          <Typography variant='caption'>Contractors</Typography>
-        </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
-          <Typography variant='caption'>Contractor Rate Settings</Typography>
-        </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='contained'
-          onClick={() => navigate('/config/sale-agent')}
-        >
+      <Box flexWrap='wrap' sx={{my: 3}}>
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained' onClick={() => navigate('/config/sale-agent')}>
           <Typography variant='caption'>Sales Agents</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='contained'
-          onClick={() => navigate('/admin/firebase-users')}
-        >
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained' onClick={() => navigate('/admin/firebase-users')}>
           <Typography variant='caption'>Firebase Users</Typography>
+        </Button>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined' onClick={() => navigate('/config/contractor-rate')}>
+          <Typography variant='caption'>Contractors</Typography>
         </Button>
       </Box>
 
       <Typography variant='h5'>Inventory</Typography>
       <Divider sx={{borderBottomWidth: 4}} />
-      <Box display={'flex'} sx={{my: 3}}>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+      <Box flexWrap='wrap' sx={{my: 3}}>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Add Hard Surface</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Add Soft Surface</Typography>
         </Button>
       </Box>

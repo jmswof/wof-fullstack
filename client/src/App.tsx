@@ -25,6 +25,7 @@ import CancelAppointment from './pages/admin/appointment/cancel-appointment';
 import ListAppointment from './pages/admin/appointment/list-appointment';
 import ManageAppointment from './pages/admin/appointment/manage-appointment';
 import CostRate from './pages/configure/cost-rate';
+import ContractorRate from './pages/configure/contractor-rate';
 
 // https://reactrouter.com/en/main/routers/picking-a-router
 // TODO: Update to use createBrowserRouter
@@ -50,6 +51,7 @@ const App: React.FC = () => {
           <Route path='/config/site-option' element={<SiteOption />} />
           <Route path='/config/cost-rate' element={<CostRate />} />
           <Route path='/config/sale-agent' element={<SaleAgent />} />
+          <Route path='/config/contractor-rate' element={<ContractorRate />} />
           <Route path='/tracking' element={<Tracking />} />
           <Route path='/reports' element={<Reports />} />
         </Route>
