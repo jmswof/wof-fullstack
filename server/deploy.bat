@@ -9,7 +9,7 @@ RMDIR /S /Q D:\server\Apache24\sites\wof-server\node_modules
 COPY index.js D:\server\Apache24\sites\wof-server
 COPY package.json D:\server\Apache24\sites\wof-server
 COPY .env D:\server\Apache24\sites\wof-server
-ROBOCOPY routes D:\server\Apache24\sites\wof-server /E
+ROBOCOPY routes D:\server\Apache24\sites\wof-server\routes /E
 CALL npm install --prefix D:\server\Apache24\sites\wof-server
 CALL pm2 start D:\server\Apache24\sites\wof-server\index.js --name wof-express
 ECHO THE DEVELOPMENT WOF-SERVER DEPLOYMENT IS A SUCCESS!
