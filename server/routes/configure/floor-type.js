@@ -11,7 +11,19 @@ const initRest = (app, route) => {
 
     // GET /configure/floor-type (READ)
     app.get(route, cors(), async (request, response) => {
-      const data = await floorTypes.find().toArray();
+      let data;
+      switch (request.query.type) {
+        case 'active':
+        case 'inactive':
+          data = await floorTypes.find({ active : request.query.type === 'active' }).toArray();
+          break;
+
+        case 'all':
+        default:
+          data = await floorTypes.find().toArray();
+          break;
+      }
+
       response.json(data);
       console.log(`[HTTP][GET] ${route}: shared floorTypes[${data.length}] to ${request.token.email}`);
     });
@@ -19,7 +31,7 @@ const initRest = (app, route) => {
     // POST /configure/floor-type (CREATE)
     app.post(route, cors(), async (request, response) => {
       response.json(await floorTypes.insertOne(request.body));
-      console.log(`[HTTP][POST] ${route}: ${request.token.email} created a new ${request.body['name']} floor type.`);
+      console.log(`[HTTP][POST] ${route}: ${request.token.email} created a new ${request.body['label']} floor type.`);
     });
 
     // PATCH /configure/floor-type (UPDATE)

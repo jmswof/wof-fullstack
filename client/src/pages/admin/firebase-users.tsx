@@ -12,15 +12,15 @@ import Typography from '@mui/material/Typography';
 import { useAuthContext } from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
 
-const ManageUsers: React.FC = () => {
-  document.title = 'World of Floors - User Management';
+const FirebaseUsers: React.FC = () => {
+  document.title = 'World of Floors - Firebase Users';
 
   const {user} = useAuthContext();
 
-  const [users, setUsers] = useState<[]>([]);
+  const [firebaseUsers, setFirebaseUsers] = useState<[]>([]);
 
   useEffect(() => {
-    fetch(process.env.WOF_SERVER + '/users', {
+    fetch(`${process.env.WOF_SERVER}/configure/firebase-user?type=all`, {
       method: 'GET',
       mode: 'cors',
       cache: 'no-cache',
@@ -30,14 +30,14 @@ const ManageUsers: React.FC = () => {
       }
     })
     .then(response => response.json())
-    .then(response => setUsers(response))
+    .then(response => setFirebaseUsers(response))
     .catch(error => console.log(error));
   }, []);
   
   return (
     <Container component={Paper} sx={{my:5, p: 2}}>
-      <Box display={'flex'} justifyContent={'center'}>
-        <Typography variant='h3'>World of Floor Users</Typography>
+      <Box display={'flex'} justifyContent={'center'} sx={{m: 2}}>
+        <Typography variant='h3'>Firebase Users</Typography>
       </Box>
       <TableContainer sx={{maxHeight: '70vh'}}>
         <Table stickyHeader>
@@ -52,21 +52,21 @@ const ManageUsers: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user, userIndex) => (
-              <TableRow key={user['uid']}>
-                <TableCell>{userIndex + 1}</TableCell>
-                <TableCell>{user['email']}</TableCell>
-                <TableCell>{user['emailVerified'] ? 'Yes' : 'No'}</TableCell>
-                <TableCell>{user['disabled'] ? 'Yes' : 'No'}</TableCell>
-                <TableCell>{user['creationTime']}</TableCell>
-                <TableCell>{user['lastSignInTime']}</TableCell>
+            {firebaseUsers.map((firebaseUser, index) => (
+              <TableRow key={firebaseUser['uid']}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{firebaseUser['email']}</TableCell>
+                <TableCell>{firebaseUser['emailVerified'] ? 'Yes' : 'No'}</TableCell>
+                <TableCell>{firebaseUser['disabled'] ? 'Yes' : 'No'}</TableCell>
+                <TableCell>{firebaseUser['creationTime']}</TableCell>
+                <TableCell>{firebaseUser['lastSignInTime']}</TableCell>
               </TableRow>
             ))}
           </TableBody>
           <TableFooter>
             <TableRow>
               <TableCell align='center' colSpan={6}>
-                <Typography variant='caption'>{users.length} Users</Typography>
+                <Typography variant='caption'>{firebaseUsers.length} Firebase User(s)</Typography>
               </TableCell>
             </TableRow>
           </TableFooter>
@@ -76,4 +76,4 @@ const ManageUsers: React.FC = () => {
   );
 };
 
-export default ManageUsers;
+export default FirebaseUsers;

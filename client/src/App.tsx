@@ -1,4 +1,4 @@
-import { packersTheme } from "./theme/PackersTheme";
+import { packersTheme } from './theme/PackersTheme';
 import { AuthContext, AuthType } from './context/AuthContext';
 import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
@@ -8,16 +8,22 @@ import Home from './pages/home';
 import Login from './pages/login';
 import Example from './pages/example';
 import WofNavBar from './components/navigation/WofNavBar';
-import Product from './pages/product';
 import ProtectedRoute from './components/route/ProtectedRoute';
+import Product from './pages/product';
+
 import Admin from './pages/admin';
 import Tracking from './pages/tracking';
 import Reports from './pages/reports';
 import Error from './pages/error';
 import CommandCenter from './pages/admin/command-center';
-import ManageUsers from './pages/admin/manage-users';
-import FloorType from './pages/configure/floor-type';
-import Appointment from './pages/admin/appointment';
+import FirebaseUsers from './pages/admin/firebase-users';
+import NewAppointment from './pages/admin/appointment/new-appointment';
+import DelegateAppointment from './pages/admin/appointment/delegate-appointment';
+import SiteOption from './pages/configure/site-option';
+import SaleAgent from './pages/admin/sales-agent';
+import CancelAppointment from './pages/admin/appointment/cancel-appointment';
+import ListAppointment from './pages/admin/appointment/list-appointment';
+import ManageAppointment from './pages/admin/appointment/manage-appointment';
 
 // https://reactrouter.com/en/main/routers/picking-a-router
 // TODO: Update to use createBrowserRouter
@@ -34,9 +40,14 @@ const App: React.FC = () => {
           <Route path='/example/:rpname?' element={<Example fcname={'functional component props'}/>} />
           <Route path='/admin' element={<Admin />} />
           <Route path='/admin/command-center' element={<CommandCenter />} />
-          <Route path='/admin/manage-users' element={<ManageUsers />} />
-          <Route path='/admin/schedule-appointment' element={<Appointment />} />
-          <Route path='/config/floor-type' element={<FloorType />} />
+          <Route path='/admin/firebase-users' element={<FirebaseUsers />} />
+          <Route path='/admin/new-appointment' element={<NewAppointment />} />
+          <Route path='/admin/cancel-appointment' element={<CancelAppointment />} />
+          <Route path='/admin/delegate-appointment' element={<DelegateAppointment />} />
+          <Route path='/admin/list-appointment' element={<ListAppointment />} />
+          <Route path='/admin/appointment/:appointmentId?' element={<ManageAppointment />} />
+          <Route path='/config/site-option' element={<SiteOption />} />
+          <Route path='/config/sale-agent' element={<SaleAgent />} />
           <Route path='/tracking' element={<Tracking />} />
           <Route path='/reports' element={<Reports />} />
         </Route>

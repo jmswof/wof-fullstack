@@ -4,18 +4,15 @@ import Container from '@mui/material/Container';
 import Divider from "@mui/material/Divider";
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { useAuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Admin: React.FC = () => {
   document.title = 'World of Floors - Admin';
   const navigate = useNavigate();
 
-  const {user} = useAuthContext();
-
   return (
     <Container component={Paper} sx={{my: 5, p: 2}}>
-      <Box display={'flex'} justifyContent={'center'}>
+      <Box display={'flex'} justifyContent={'center'} sx={{m: 2}}>
         <Typography variant='h3'>Administration</Typography>
       </Box>
 
@@ -46,20 +43,34 @@ const Admin: React.FC = () => {
 
       <Typography variant='h5'>Scheduling</Typography>
       <Divider sx={{borderBottomWidth: 4}} />
-      <Box display={'flex'} sx={{my: 3}}>
-      <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'
-          onClick={() => navigate('/admin/schedule-appointment')}
-        >
+      <Box display={'flex'} flexWrap={'wrap'} sx={{my: 3}}>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'
+            onClick={() => navigate('/admin/new-appointment')}
+          >
           <Typography variant='caption'>Schedule New Appointment</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
-          <Typography variant='caption'>Block Appointment Times</Typography>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'
+            onClick={() => navigate('/admin/delegate-appointment')}
+          >
+          <Typography variant='caption'>Delegate Appointment</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
-          <Typography variant='caption'>View Blocked Appointment Times</Typography>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'
+            onClick={() => navigate('/admin/list-appointment')}
+          >
+          <Typography variant='caption'>List Appointments</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'
+            onClick={() => navigate('/admin/cancel-appointment')}
+          >
+          <Typography variant='caption'>Cancel Appointment</Typography>
+        </Button>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>View/Edit Service Area</Typography>
+        </Button>
+        <Button sx={{m: 1, boxShadow: 3}} variant='outlined'
+            onClick={() => navigate('/config/site-option')}
+          >
+          <Typography variant='caption'>Site Option</Typography>
         </Button>
       </Box>
 
@@ -81,9 +92,6 @@ const Admin: React.FC = () => {
         <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Accessory Product Pricing</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
-          <Typography variant='caption'>Pricing Controls</Typography>
-        </Button>
       </Box>
 
       <Typography variant='h5'>Employee Management</Typography>
@@ -95,13 +103,15 @@ const Admin: React.FC = () => {
         <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Contractor Rate Settings</Typography>
         </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
+        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'
+          onClick={() => navigate('/config/sale-agent')}
+        >
           <Typography variant='caption'>Sales Agents</Typography>
         </Button>
         <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'
-          onClick={() => navigate('/admin/manage-users')}
+          onClick={() => navigate('/admin/firebase-users')}
         >
-          <Typography variant='caption'>Web and Tablet Users</Typography>
+          <Typography variant='caption'>Firebase Users</Typography>
         </Button>
       </Box>
 
@@ -113,11 +123,6 @@ const Admin: React.FC = () => {
         </Button>
         <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'>
           <Typography variant='caption'>Add Soft Surface</Typography>
-        </Button>
-        <Button sx={{mx: 1, boxShadow: 3}} variant='outlined'
-          onClick={() => navigate('/config/floor-type')}
-        >
-          <Typography variant='caption'>Floor Type</Typography>
         </Button>
       </Box>
     </Container>

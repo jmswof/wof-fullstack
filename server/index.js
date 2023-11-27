@@ -5,8 +5,13 @@ const dbURL = process.env.WOF_DATABASE;
 const { initJobs } = require('./routes/job');
 const { initProducts } = require('./routes/product');
 const { initFloorType } = require('./routes/configure/floor-type');
-const { initUsers } = require('./routes/user');
+const { initFirebaseUser } = require('./routes/firebase-user');
 const { initAppointments } = require('./routes/appointment');
+const { initReference } = require('./routes/configure/reference');
+const { initColor } = require('./routes/configure/color');
+const { initPriority } = require('./routes/configure/priority');
+const { initUState } = require('./routes/configure/us-state');
+const { initSaleAgent } = require('./routes/configure/sale-agent');
 // const { initDevices } = require('./routes/device');
 
 const express = require('express');
@@ -24,7 +29,7 @@ const verifyToken = async (request, response, next) => {
   const bearerHeader = request.headers['authorization'];
   if ('OPTIONS' === request.method) {
     response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE, OPTIONS');
+    response.header('Access-Control-Allow-Methods', 'GET, PATCH, PUT, POST, DELETE, OPTIONS');
     response.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
     response.sendStatus(200);
   } else if (typeof bearerHeader !== 'undefined') {
@@ -58,8 +63,13 @@ app.use(require('cors')()); // CORS because we're on different port :(
 const inits = {
   product: initProducts(socketio, app, '/products'),
   job: initJobs(socketio, app, '/jobs'),
-  user: initUsers(app, '/users'),
+  firebaseUser: initFirebaseUser(app, '/configure/firebase-user'),
   floorType: initFloorType(app, '/configure/floor-type'),
+  reference: initReference(app, '/configure/reference'),
+  color: initColor(app, '/configure/color'),
+  priority: initPriority(app, '/configure/priority'),
+  ustate: initUState(app, '/configure/us-state'),
+  saleAgent: initSaleAgent(app, '/configure/sale-agent'),
   appointment: initAppointments(socketio, app, '/appointments')
 };
 
