@@ -59,7 +59,8 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'public/static/wood5.jpg', to: 'static/' }
+        { from: 'public/static/wood5.jpg', to: 'static/' },
+        { from: 'public/static/WorldOfFloors.png', to: 'static/' },
       ]
     }),
     new webpack.DefinePlugin({
