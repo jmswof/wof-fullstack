@@ -2,6 +2,7 @@
 ECHO DEPLOY TO DEVELOPMENT WOF-CLIENT
 DEL D:\server\Apache24\sites\wof-client\index.html
 DEL D:\server\Apache24\sites\wof-client\*.js
+DEL D:\server\Apache24\sites\wof-client\*.txt
 RMDIR /S /Q D:\server\Apache24\sites\wof-client\static
 CALL npm install
 CALL webpack .

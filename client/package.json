@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server .",
-    "build": "webpack .",
+    "start": "webpack serve --open --config webpack.config.js --mode=development",
+    "build": "webpack . --mode=production",
     "deploy": "deploy.bat"
   },
   "author": "Jason Schwebke <jschwebke@worldoffloors.com>",
