@@ -73,8 +73,17 @@ const Admin: React.FC = () => {
         <Button sx={{m: 1, boxShadow: 3}} variant='contained' onClick={() => navigate('/config/site-option')}>
           <Typography variant='caption'>Site Option</Typography>
         </Button>
+
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained' onClick={() => navigate('/config/labor-rate')}>
+          <Typography variant='caption'>Labor Rates</Typography>
+        </Button>
+
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained' onClick={() => navigate('/config/job-service')}>
+          <Typography variant='caption'>Job Services</Typography>
+        </Button>
+
         <Button sx={{m: 1, boxShadow: 3}} variant='outlined' onClick={() => navigate('/config/cost-rate')}>
-          <Typography variant='caption'>Costs and Rates</Typography>
+          <Typography variant='caption'>Costs and Financing</Typography>
         </Button>
       </Box>
 

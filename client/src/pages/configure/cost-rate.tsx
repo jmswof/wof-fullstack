@@ -4,7 +4,6 @@ import Paper from '@mui/material/Paper';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
-import LaborRate from './pricing/labor-rate';
 import ProductCost from './pricing/product-cost';
 import AccessoryCost from './pricing/accessory-cost';
 import Financing from './pricing/financing';
@@ -14,11 +13,10 @@ import { useState } from 'react';
 const CostRate: React.FC = () => {
   document.title = 'World of Floors - Costs and Rates';
   const views = {
-    0:'Labor Rates',
-    1:'Product Costs',
-    2:'Accessory Costs',
-    3: 'Retail Prices',
-    4:'Financing'
+    0: 'Product Costs',
+    1: 'Accessory Costs',
+    2: 'Retail Prices',
+    3: 'Financing'
   };
 
   const [index, setIndex] = useState(0);
@@ -34,7 +32,6 @@ const CostRate: React.FC = () => {
         { Object.keys(views).map(view => <Tab key={view} label={views[view]} />) }
       </Tabs>
 
-      {views[index] === 'Labor Rates' && <LaborRate />}
       {views[index] === 'Product Costs' && <ProductCost />}
       {views[index] === 'Accessory Costs' && <AccessoryCost />}
       {views[index] === 'Retail Prices' && <RetailPrice />}

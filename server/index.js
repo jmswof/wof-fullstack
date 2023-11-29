@@ -24,6 +24,8 @@ const socketio = require('socket.io')(server);
 // https://firebase.google.com/docs/admin/setup
 const admin = require("firebase-admin");
 const config = require("./wof-server.json");
+const { initLaborRate } = require('./routes/configure/labor-rate');
+const { initJobService } = require('./routes/configure/job-service');
 admin.initializeApp( { credential: admin.credential.cert(config) } );
 
 // https://expressjs.com/en/guide/writing-middleware.html
@@ -70,6 +72,8 @@ const inits = {
   reference: initReference(app, '/configure/reference'),
   color: initColor(app, '/configure/color'),
   'labor-type': initLaborType(app, '/configure/labor-type'),
+  'labor-rate': initLaborRate(app, '/configure/labor-rate'),
+  'job-service': initJobService(app, '/configure/job-service'),
   priority: initPriority(app, '/configure/priority'),
   'us-state': initUState(app, '/configure/us-state'),
   'sale-agent': initSaleAgent(app, '/configure/sale-agent'),
