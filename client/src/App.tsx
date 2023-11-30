@@ -28,6 +28,8 @@ import CostRate from './pages/configure/cost-rate';
 import ContractorRate from './pages/configure/contractor-rate';
 import LaborRate from './pages/configure/pricing/labor-rate';
 import JobService from './pages/configure/option/job-service';
+import ProductCost from './pages/admin/product-cost';
+import RetailPrice from './pages/admin/retail-price';
 
 // https://reactrouter.com/en/main/routers/picking-a-router
 // TODO: Update to use createBrowserRouter
@@ -51,6 +53,8 @@ const App: React.FC = () => {
           <Route path='/admin/list-appointment' element={<ListAppointment />} />
           <Route path='/admin/appointment/:appointmentId?' element={<ManageAppointment />} />
           <Route path='/config/site-option' element={<SiteOption />} />
+          <Route path='/config/product-cost' element={<ProductCost />} />
+          <Route path='/config/retail-price' element={<RetailPrice />} />
           <Route path='/config/cost-rate' element={<CostRate />} />
           <Route path='/config/labor-rate' element={<LaborRate />} />
           <Route path='/config/job-service' element={<JobService />} />

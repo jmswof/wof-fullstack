@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { useAuthContext } from '../../../context/AuthContext';
+import { useAuthContext } from '../../context/AuthContext';
 import { useEffect } from 'react';
 
 const RetailPrice: React.FC = () => {
