@@ -221,7 +221,7 @@ const NewAppointment: React.FC = () => {
             <Select value={ustate} onChange={ e => setUState(e.target.value) }
               input={<OutlinedInput label="State" />}
             >
-              {ustates.map( ustate => <MenuItem key={ustate['_id']} value={ustate['short']}>{ustate['label']}</MenuItem> )}
+              {ustates.map( ustate => <MenuItem key={ustate['_id']} value={ustate['_id']}>{ustate['label']}</MenuItem> )}
             </Select>
           </FormControl>
           <TextField label='Zip Code' value={zipCode} size='small' onChange={e => setZipCode(e.target.value)} sx={{m:1}} />
@@ -247,7 +247,7 @@ const NewAppointment: React.FC = () => {
               onChange={e => setFloorType(typeof e.target.value === 'string' ? [e.target.value] : e.target.value)}
               input={<OutlinedInput label="Floor Type" />}
             >
-              {floorTypes.map( floorType => <MenuItem key={floorType['_id']} value={floorType['short']}>{floorType['label']}</MenuItem> )}
+              {floorTypes.map( floorType => <MenuItem key={floorType['_id']} value={floorType['_id']}>{floorType['label']}</MenuItem> )}
             </Select>
           </FormControl>
         </Box>
@@ -257,7 +257,7 @@ const NewAppointment: React.FC = () => {
             <Select value={reference} multiple onChange={ e => setReference(typeof e.target.value === 'string' ? [e.target.value] : e.target.value) }
               input={<OutlinedInput label="How did you heard about us?" />}
             >
-              {references.map( reference => <MenuItem key={reference['_id']} value={reference['short']}>{reference['label']}</MenuItem> )}
+              {references.map( reference => <MenuItem key={reference['_id']} value={reference['_id']}>{reference['label']}</MenuItem> )}
             </Select>
           </FormControl>
         </Box>
@@ -271,13 +271,13 @@ const NewAppointment: React.FC = () => {
             <FormControl sx={{m: 1}} size='small'>
               <InputLabel>Color Preference(s)</InputLabel>
               <Select value={colorPreference} multiple onChange={ e => setColorPreference(typeof e.target.value === 'string' ? [e.target.value] : e.target.value) } input={<OutlinedInput label="Color Preference(s)" />}>
-                {colors.map( color => <MenuItem key={color['_id']} value={color['short']}>{color['label']}</MenuItem> )}
+                {colors.map( color => <MenuItem key={color['_id']} value={color['_id']}>{color['label']}</MenuItem> )}
               </Select>
             </FormControl>
             <FormControl sx={{m: 1, width: '10rem'}} size='small'>
               <InputLabel>Priorities</InputLabel>
               <Select value={priority} multiple onChange={ e => setPriority(typeof e.target.value === 'string' ? [e.target.value] : e.target.value) } input={<OutlinedInput label="Priorities" />}>
-                {priorities.map( priority => <MenuItem key={priority['_id']} value={priority['short']}>{priority['label']}</MenuItem> )}
+                {priorities.map( priority => <MenuItem key={priority['_id']} value={priority['_id']}>{priority['label']}</MenuItem> )}
               </Select>
             </FormControl>
           </Box>

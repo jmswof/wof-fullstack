@@ -1,4 +1,5 @@
 require('dotenv').config({path: '.env'});
+
 const port = process.env.WOF_SERVER_PORT;
 const dbURL = process.env.WOF_DATABASE;
 
@@ -14,6 +15,8 @@ const { initLaborType } = require('./routes/configure/labor-type');
 const { initUState } = require('./routes/configure/us-state');
 const { initSaleAgent } = require('./routes/configure/sale-agent');
 const { initVendor } = require('./routes/configure/vendor');
+const { initLaborRate } = require('./routes/configure/labor-rate');
+const { initJobService } = require('./routes/configure/job-service');
 // const { initDevices } = require('./routes/device');
 
 const express = require('express');
@@ -24,8 +27,6 @@ const socketio = require('socket.io')(server);
 // https://firebase.google.com/docs/admin/setup
 const admin = require("firebase-admin");
 const config = require("./wof-server.json");
-const { initLaborRate } = require('./routes/configure/labor-rate');
-const { initJobService } = require('./routes/configure/job-service');
 admin.initializeApp( { credential: admin.credential.cert(config) } );
 
 // https://expressjs.com/en/guide/writing-middleware.html

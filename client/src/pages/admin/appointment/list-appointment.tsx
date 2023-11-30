@@ -22,6 +22,11 @@ const ListAppointment: React.FC = () => {
   const navigate = useNavigate();
   const [saleAgents, setSaleAgents] = useState<object[]>([]);
   const [appointments, setAppointments] = useState<object[]>([]);
+  const [ustates, setUStates] = useState<object[]>([]);
+  const [floorTypes, setFloorTypes] = useState<object[]>([]);
+  const [colors, setColors] = useState<object[]>([]); 
+  const [priorities, setPriorities] = useState<object[]>([]);
+  const [references, setReferences] = useState<object[]>([]);
   const {user} = useAuthContext();
 
   useEffect(() => {
@@ -36,7 +41,47 @@ const ListAppointment: React.FC = () => {
         }
       })
       .then(response => response.json()),
-      fetch(process.env.WOF_SERVER + '/appointments?type=all', {
+      fetch(`${process.env.WOF_SERVER}/configure/us-state?type=all`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+        }
+      })
+      .then(response => response.json()),
+      fetch(`${process.env.WOF_SERVER}/configure/reference?type=all`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+        }
+      })
+      .then(response => response.json()),
+      fetch(`${process.env.WOF_SERVER}/configure/priority?type=all`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+        }
+      })
+      .then(response => response.json()),
+      fetch(`${process.env.WOF_SERVER}/configure/color?type=all`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+        }
+      })
+      .then(response => response.json()),
+      fetch(`${process.env.WOF_SERVER}/configure/floor-type?type=all`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+        }
+      })
+      .then(response => response.json()),
+      fetch(`${process.env.WOF_SERVER}/appointments`, {
         method: 'GET',
         mode: 'cors',
         cache: 'no-cache',
@@ -45,10 +90,15 @@ const ListAppointment: React.FC = () => {
           'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
         }
       })
-      .then(response => response.json()),
+      .then(response => response.json())
     ])
-    .then(([saleAgents, appointments]) => {
+    .then(([saleAgents, ustates, references, priorities, colors, floorTypes, appointments]) => {
       setSaleAgents(saleAgents);
+      setUStates(ustates);
+      setReferences(references);
+      setPriorities(priorities);
+      setColors(colors);
+      setFloorTypes(floorTypes);
       setAppointments(appointments);
     })
     .catch(error => {
@@ -110,7 +160,7 @@ const ListAppointment: React.FC = () => {
                     <Box><Typography variant='caption'>{appointment['customer'].address.street1}</Typography></Box>
                     <Box>
                       <Typography variant='caption'>
-                        {appointment['customer'].address.city} {appointment['customer'].address.state} {appointment['customer'].address.zipCode}
+                        {appointment['customer'].address.city} { ustates.find(state => state['_id'] === appointment['customer'].address.ustate)['short'] } {appointment['customer'].address.zipCode}
                       </Typography>
                     </Box>
                   </Box>
@@ -139,17 +189,17 @@ const ListAppointment: React.FC = () => {
                   <Box sx={{ p: 1 }}>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Color</b> {appointment['colorPreference'].join(', ')}
+                        <b>Color</b> {colors.filter(color => appointment['colorPreference'].includes(color['_id'])).map(color => color['short']).join(', ')}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Floor</b> {appointment['floorType'].join(', ')}
+                        <b>Floor</b> {floorTypes.filter(floorType => appointment['floorType'].includes(floorType['_id'])).map(floorType => floorType['short']).join(', ')}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Reference</b> {appointment['reference'].join(', ')}
+                        <b>Reference</b> {references.filter(reference => appointment['reference'].includes(reference['_id'])).map(reference => reference['short']).join(', ')}
                       </Typography>
                     </Box>
                   </Box>

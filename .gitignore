@@ -10,3 +10,4 @@ server/certs
 server/wof-server.json
 database/node_modules
 database/package-lock.json
+database/wof-server.json
