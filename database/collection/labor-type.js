@@ -15,17 +15,17 @@ const initLaborTypes = async () => {
 };
 
 const data = [
-  { label: 'Floor Prep', short: 'FP', active: true },
-  { label: 'Furniture', short: 'FN', active: true },
-  { label: 'Installation', short: 'IN', active: true },
-  { label: 'Installation Upcharge', short: 'IU', active: true },
-  { label: 'Miscellaneous', short: 'MC', active: true },
-  { label: 'New Wall Finish', short: 'NF', active: true },
-  { label: 'Rip-Up & Haul Away', short: 'RH', active: true },
-  { label: 'R&R', short: 'RR', active: true },
-  { label: 'Stair Accessories', short: 'SA', active: true },
-  { label: 'Steps', short: 'SP', active: true },
-  { label: 'Transition', short: 'TN', active: true }
+  { label: 'Floor Prep', active: true },
+  { label: 'Furniture', active: true },
+  { label: 'Installation', active: true },
+  { label: 'Installation Upcharge', active: true },
+  { label: 'Miscellaneous', active: true },
+  { label: 'New Wall Finish', active: true },
+  { label: 'Rip-Up & Haul Away', active: true },
+  { label: 'R&R', active: true },
+  { label: 'Stair Accessories', active: true },
+  { label: 'Steps', active: true },
+  { label: 'Transition', active: true }
 ];
 
 module.exports = { initLaborTypes };

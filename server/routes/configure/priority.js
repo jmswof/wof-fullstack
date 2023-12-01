@@ -30,11 +30,7 @@ const initRest = (app, route) => {
     // POST /configure/priority (CREATE)
     app.post(route, cors(), async (request, response) => {
       const data = request.body;
-      if (
-        !data.hasOwnProperty('active') ||
-        !data.hasOwnProperty('label') ||
-        !data.hasOwnProperty('short')
-      ) {
+      if (!data.hasOwnProperty('active') || !data.hasOwnProperty('label')) {
         console.log(`[HTTP][${request.method}] ${request.url} invalid POST data, response with 400 Bad Request`);
         response.sendStatus(400);
         return;
@@ -44,24 +40,24 @@ const initRest = (app, route) => {
       console.log(`[HTTP][POST] ${route}: ${request.token.email} created a new ${data['label']} priority.`);
     });
 
-    // PATCH /configure/color (UPDATE)
+    // PATCH /configure/priority (UPDATE)
     app.patch(route, cors(), async (request, response) => {
       // response.json(await floorTypes.updateOne(
       //   {_id: new ObjectId(request.body._id)},
       //   { $set: { name: request.body.name }},
       //   {}
       // ));
-      console.log(`[HTTP][PATCH] ${route}: ${request.token.email} updated a color.`);
+      console.log(`[HTTP][PATCH] ${route}: ${request.token.email} updated a priority.`);
     });
 
-    // DELETE /configure/color (DELETE)
+    // DELETE /configure/priority (DELETE)
     app.delete(route, cors(), async (request, response) => {
       // response.json(
       //   await floorTypes.deleteMany({
       //     _id: { $in: request.body.map(id => (new ObjectId(id))) }
       //   })
       // );
-      console.log(`[HTTP][DELETE] ${route}: ${request.token.email} deleted ${request.body.length} color(s).`);
+      console.log(`[HTTP][DELETE] ${route}: ${request.token.email} deleted ${request.body.length} priorit(ies).`);
     });
 };
 

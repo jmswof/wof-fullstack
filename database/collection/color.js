@@ -15,10 +15,10 @@ const initColors = async () => {
 };
 
 const data = [
-  { label: 'Gray', short: 'GR', active: true },
-  { label: 'Earth Tone', short: 'ET', active: true },
-  { label: 'Taupe', short: 'TP', active: true },
-  { label: 'Other', short: 'OR', active: true }
+  { label: 'Gray', active: true },
+  { label: 'Earth Tone', active: true },
+  { label: 'Taupe', active: true },
+  { label: 'Other', active: true }
 ];
 
 module.exports = { initColors };

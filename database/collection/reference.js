@@ -15,17 +15,17 @@ const initReferences = async () => {
 };
 
 const data = [
-  { label: 'Return Customer', short: 'RC', active: true },
-  { label: 'Referral', short: 'RF', active: true },
-  { label: 'Search Engine', short: 'SE', active: true },
-  { label: 'Social Media', short: 'SM', active: true },
-  { label: 'Print Ad', short: 'PA', active: true },
-  { label: 'Television', short: 'TV', active: true },
-  { label: 'Billboard', short: 'BB', active: true },
-  { label: 'Angi', short: 'AN', active: true },
-  { label: 'HomeAdvisor', short: 'HA', active: true },
-  { label: 'Polish Festival', short: 'PF', active: true },
-  { label: 'Fest Italiana', short: 'FI', active: true }
+  { label: 'Return Customer', active: true },
+  { label: 'Referral', active: true },
+  { label: 'Search Engine', active: true },
+  { label: 'Social Media', active: true },
+  { label: 'Print Ad', active: true },
+  { label: 'Television', active: true },
+  { label: 'Billboard', active: true },
+  { label: 'Angi', active: true },
+  { label: 'HomeAdvisor', active: true },
+  { label: 'Polish Festival', active: true },
+  { label: 'Fest Italiana', active: true }
 ];
 
 module.exports = { initReferences };

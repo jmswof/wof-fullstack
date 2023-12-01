@@ -30,12 +30,7 @@ const initRest = (app, route) => {
     // POST /configure/job-service (CREATE)
     app.post(route, cors(), async (request, response) => {
       const data = request.body;
-      if (
-        !data.hasOwnProperty('active') ||
-        !data.hasOwnProperty('label') ||
-        !data.hasOwnProperty('unit') ||
-        !data.hasOwnProperty('short')
-      ) {
+      if (!data.hasOwnProperty('active') || !data.hasOwnProperty('label') || !data.hasOwnProperty('unit')) {
         console.log(`[HTTP][${request.method}] ${request.url} invalid POST data, response with 400 Bad Request`);
         response.sendStatus(400);
         return;

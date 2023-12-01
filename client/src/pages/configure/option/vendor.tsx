@@ -9,7 +9,6 @@ const Vendor: React.FC = () => {
   const {user} = useAuthContext();
   const [vendors, setVendors] = useState<object[]>([]);
   const [label, setLabel] = useState<string>('');
-  const [short, setShort] = useState<string>('');
   const [active, setActive] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
 
@@ -33,7 +32,7 @@ const Vendor: React.FC = () => {
 
   const submitCreate = () => {
     setError('');
-    if (!label || !short) {
+    if (!label) {
       setError('Empty form fields cannot be added.');
       return;
     }
@@ -45,15 +44,14 @@ const Vendor: React.FC = () => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
       },
-      body: JSON.stringify({label, short, active})
+      body: JSON.stringify({label, active})
     })
     .then(response => response.json())
     .then(response => {
       if (response.acknowledged === true && response.insertedId != null) {
-        setVendors([...vendors, {'_id': response.insertedId, 'label': label, 'short': short, 'active': active}]);
+        setVendors([...vendors, {'_id': response.insertedId, 'label': label, 'active': active}]);
         setActive(true);
         setLabel('');
-        setShort('');
       }
     })
     .catch(() => {
@@ -81,13 +79,6 @@ const Vendor: React.FC = () => {
             </TableCell>
             <TableCell>
               <FormControl required>
-                <InputLabel>Short</InputLabel>
-                <Input value={short} onChange={(e) => setShort(e.target.value)} />
-                <FormHelperText>A shorter label</FormHelperText>
-              </FormControl>
-            </TableCell>
-            <TableCell>
-              <FormControl required>
                 <FormControlLabel label='Active' control={<Checkbox value={active} onChange={e => setActive(!active)} checked={active} />} />
               </FormControl>
             </TableCell>
@@ -106,9 +97,6 @@ const Vendor: React.FC = () => {
                 <Typography variant='h6'>{vendor['label']}</Typography>
               </TableCell>
               <TableCell>
-                <Typography>{vendor['short']}</Typography>
-              </TableCell>
-              <TableCell>
                 <Typography>{vendor['active'] ? 'Yes' : 'No'}</Typography>
               </TableCell>
               <TableCell>
@@ -120,7 +108,7 @@ const Vendor: React.FC = () => {
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell align='center' colSpan={4}>
+            <TableCell align='center' colSpan={3}>
               <Typography variant='caption'>{vendors.length} Vendor(s)</Typography>
             </TableCell>
           </TableRow>

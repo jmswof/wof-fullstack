@@ -15,14 +15,14 @@ const initVendor = async () => {
 };
 
 const data = [
-  { label: 'Cali', short: 'CL', active: true },
-  { label: 'DreamWeaver', short: 'DW', active: true },
-  { label: 'Rong Gean', short: 'RG', active: true },
-  { label: 'CDC', short: 'CD', active: true },
-  { label: 'LWM', short: 'LW', active: true },
-  { label: 'Engineered', short: 'EN', active: true },
-  { label: 'WF', short: 'WF', active: true },
-  { label: 'Nature', short: 'NA', active: true }
+  { label: 'Cali', active: true },
+  { label: 'DreamWeaver', active: true },
+  { label: 'Rong Gean', active: true },
+  { label: 'CDC', active: true },
+  { label: 'LWM', active: true },
+  { label: 'Engineered', active: true },
+  { label: 'WF', active: true },
+  { label: 'Nature', active: true }
 ];
 
 module.exports = { initVendor };

@@ -30,7 +30,6 @@ const JobService: React.FC = () => {
   const units = ['sqft', 'lnft', 'each'];
 
   const [label, setLabel] = useState<string>('');
-  const [short, setShort] = useState<string>('');
   const [unit, setUnit] = useState<string>('');
   const [active, setActive] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -54,7 +53,7 @@ const JobService: React.FC = () => {
 
   const submitCreate = () => {
     setError('');
-    if (!label || !short || !unit ) {
+    if (!label || !unit ) {
       setError('Empty form fields cannot be added.');
       return;
     }
@@ -66,16 +65,15 @@ const JobService: React.FC = () => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
       },
-      body: JSON.stringify({label, short, unit, active})
+      body: JSON.stringify({label, unit, active})
     })
     .then(response => response.json())
     .then(response => {
       if (response.acknowledged === true && response.insertedId != null) {
-        setJobServices([...jobServices, {'_id': response.insertedId, 'label': label, 'short': short, 'unit': unit, 'active': active}]);
+        setJobServices([...jobServices, {'_id': response.insertedId, 'label': label, 'unit': unit, 'active': active}]);
         setActive(true);
         setLabel('');
         setUnit('');
-        setShort('');
       }
     })
     .catch(() => {
@@ -95,7 +93,7 @@ const JobService: React.FC = () => {
         </Alert>
       </Box>
       }
-      <Table stickyHeader>
+      <Table stickyHeader sx={{tableLayout: 'fixed'}}>
         <TableHead>
           <TableRow>
             <TableCell>
@@ -103,13 +101,6 @@ const JobService: React.FC = () => {
                 <InputLabel>Label</InputLabel>
                 <Input value={label} onChange={(e) => setLabel(e.target.value)} />
                 <FormHelperText>New Job Service to display</FormHelperText>
-              </FormControl>
-            </TableCell>
-            <TableCell>
-              <FormControl required>
-                <InputLabel>Short</InputLabel>
-                <Input value={short} onChange={(e) => setShort(e.target.value)} />
-                <FormHelperText>A shorter label</FormHelperText>
               </FormControl>
             </TableCell>
             <TableCell>
@@ -144,9 +135,6 @@ const JobService: React.FC = () => {
                 <Typography variant='h6'>{jobService['label']}</Typography>
               </TableCell>
               <TableCell>
-                <Typography>{jobService['short']}</Typography>
-              </TableCell>
-              <TableCell>
                 <Typography>{jobService['unit']}</Typography>
               </TableCell>
               <TableCell>
@@ -161,7 +149,7 @@ const JobService: React.FC = () => {
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell align='center' colSpan={5}>
+            <TableCell align='center' colSpan={4}>
               <Typography variant='caption'>{jobServices.length} Job Service(s)</Typography>
             </TableCell>
           </TableRow>

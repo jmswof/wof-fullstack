@@ -30,11 +30,7 @@ const initRest = (app, route) => {
     // POST /configure/color (CREATE)
     app.post(route, cors(), async (request, response) => {
       const data = request.body;
-      if (
-        !data.hasOwnProperty('active') ||
-        !data.hasOwnProperty('label') ||
-        !data.hasOwnProperty('short')
-      ) {
+      if (!data.hasOwnProperty('active') || !data.hasOwnProperty('label')) {
         console.log(`[HTTP][${request.method}] ${request.url} invalid POST data, response with 400 Bad Request`);
         response.sendStatus(400);
         return;

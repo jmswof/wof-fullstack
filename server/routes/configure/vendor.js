@@ -27,14 +27,10 @@ const initRest = (app, route) => {
       console.log(`[HTTP][GET] ${route}: shared vendors[${data.length}] to ${request.token.email}`);
     });
 
-    // POST /configure/vendors (CREATE)
+    // POST /configure/vendor (CREATE)
     app.post(route, cors(), async (request, response) => {
       const data = request.body;
-      if (
-        !data.hasOwnProperty('active') ||
-        !data.hasOwnProperty('label') ||
-        !data.hasOwnProperty('short')
-      ) {
+      if (!data.hasOwnProperty('active') || !data.hasOwnProperty('label')) {
         console.log(`[HTTP][${request.method}] ${request.url} invalid POST data, response with 400 Bad Request`);
         response.sendStatus(400);
         return;
@@ -44,7 +40,7 @@ const initRest = (app, route) => {
       console.log(`[HTTP][POST] ${route}: ${request.token.email} created a new ${data['label']} Vendor.`);
     });
 
-    // PATCH /configure/vendors (UPDATE)
+    // PATCH /configure/vendor (UPDATE)
     app.patch(route, cors(), async (request, response) => {
       // response.json(await floorTypes.updateOne(
       //   {_id: new ObjectId(request.body._id)},
@@ -61,7 +57,7 @@ const initRest = (app, route) => {
       //     _id: { $in: request.body.map(id => (new ObjectId(id))) }
       //   })
       // );
-      console.log(`[HTTP][DELETE] ${route}: ${request.token.email} deleted ${request.body.length} vendors(s).`);
+      console.log(`[HTTP][DELETE] ${route}: ${request.token.email} deleted ${request.body.length} vendor(s).`);
     });
 };
 

@@ -15,11 +15,11 @@ const initFloorTypes = async () => {
 };
 
 const data = [
-  { label: 'Carpet', short: 'CP', active: true },
-  { label: 'Luxury Vinyl', short: 'LV', active: true },
-  { label: 'Tile', short: 'TL', active: true },
-  { label: 'Wood', short: 'WD', active: true },
-  { label: 'Laminate', short: 'LM', active: true }
+  { label: 'Carpet', active: true },
+  { label: 'Luxury Vinyl', active: true },
+  { label: 'Tile', active: true },
+  { label: 'Wood', active: true },
+  { label: 'Laminate', active: true }
 ];
 
 module.exports = { initFloorTypes };

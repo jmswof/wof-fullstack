@@ -15,13 +15,13 @@ const initPriorities = async () => {
 };
 
 const data = [
-  { label: 'Price', short: 'PR', active: true },
-  { label: 'Color', short: 'CR', active: true },
-  { label: 'Waterproof', short: 'WP', active: true },
-  { label: 'Scratch Resistant', short: 'SR', active: true },
-  { label: 'Cleaning', short: 'CL', active: true },
-  { label: 'Durability', short: 'DR', active: true },
-  { label: 'Other', short: 'OR', active: true }
+  { label: 'Price', active: true },
+  { label: 'Color', active: true },
+  { label: 'Waterproof', active: true },
+  { label: 'Scratch Resistant', active: true },
+  { label: 'Cleaning', active: true },
+  { label: 'Durability', active: true },
+  { label: 'Other', active: true }
 ];
 
 module.exports = { initPriorities };

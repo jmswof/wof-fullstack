@@ -141,7 +141,7 @@ const DelegateAppointment: React.FC = () => {
         <Typography variant='h3'>Delegate Appointment</Typography>
         <Typography variant='caption'>{appointments.length} Unassigned Appointments</Typography>
       </Box>
-      <TableContainer sx={{maxHeight: '69vh'}}>
+      <TableContainer sx={{maxHeight: '69vh', tableLayout: 'fixed'}}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
@@ -209,17 +209,17 @@ const DelegateAppointment: React.FC = () => {
                   <Box sx={{ p: 1 }}>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Color</b> {colors.filter(color => appointment['colorPreference'].includes(color['_id'])).map(color => color['short']).join(', ')}
+                        <b>Color</b> {colors.filter(color => appointment['colorPreference'].includes(color['_id'])).map(color => color['label']).join(', ')}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Floor</b> {floorTypes.filter(floorType => appointment['floorType'].includes(floorType['_id'])).map(floorType => floorType['short']).join(', ')}
+                        <b>Floor</b> {floorTypes.filter(floorType => appointment['floorType'].includes(floorType['_id'])).map(floorType => floorType['label']).join(', ')}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Reference</b> {references.filter(reference => appointment['reference'].includes(reference['_id'])).map(reference => reference['short']).join(', ')}
+                        <b>Reference</b> {references.filter(reference => appointment['reference'].includes(reference['_id'])).map(reference => reference['label']).join(', ')}
                       </Typography>
                     </Box>
                   </Box>

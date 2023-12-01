@@ -23,7 +23,6 @@ const Priority: React.FC = () => {
   const {user} = useAuthContext();
   const [priorities, setPriorities] = useState<object[]>([]);
   const [label, setLabel] = useState<string>('');
-  const [short, setShort] = useState<string>('');
   const [active, setActive] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
 
@@ -47,7 +46,7 @@ const Priority: React.FC = () => {
 
   const submitCreate = () => {
     setError('');
-    if (!label || !short) {
+    if (!label) {
       setError('Empty form fields cannot be added.');
       return;
     }
@@ -59,15 +58,14 @@ const Priority: React.FC = () => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
       },
-      body: JSON.stringify({label, short, active})
+      body: JSON.stringify({label, active})
     })
     .then(response => response.json())
     .then(response => {
       if (response.acknowledged === true && response.insertedId != null) {
-        setPriorities([...priorities, {'_id': response.insertedId, 'label': label, 'short': short, 'active': active}]);
+        setPriorities([...priorities, {'_id': response.insertedId, 'label': label, 'active': active}]);
         setActive(true);
         setLabel('');
-        setShort('');
       }
     })
     .catch(() => {
@@ -95,13 +93,6 @@ const Priority: React.FC = () => {
             </TableCell>
             <TableCell>
               <FormControl required>
-                <InputLabel>Short</InputLabel>
-                <Input value={short} onChange={(e) => setShort(e.target.value)} />
-                <FormHelperText>A shorter label</FormHelperText>
-              </FormControl>
-            </TableCell>
-            <TableCell>
-              <FormControl required>
                 <FormControlLabel label='Active' control={<Checkbox value={active} onChange={e => setActive(!active)} checked={active} />} />
               </FormControl>
             </TableCell>
@@ -120,9 +111,6 @@ const Priority: React.FC = () => {
                 <Typography variant='h6'>{priority['label']}</Typography>
               </TableCell>
               <TableCell>
-                <Typography>{priority['short']}</Typography>
-              </TableCell>
-              <TableCell>
                 <Typography>{priority['active'] ? 'Yes' : 'No'}</Typography>
               </TableCell>
               <TableCell>
@@ -134,7 +122,7 @@ const Priority: React.FC = () => {
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell align='center' colSpan={4}>
+            <TableCell align='center' colSpan={3}>
               <Typography variant='caption'>{priorities.length} Priorit(ies)</Typography>
             </TableCell>
           </TableRow>
