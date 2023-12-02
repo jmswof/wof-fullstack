@@ -32,6 +32,7 @@ const initRest = (app, route) => {
       const data = request.body;
       if (
         !data.hasOwnProperty('active') ||
+        !data.hasOwnProperty('unit') ||
         !data.hasOwnProperty('jobService') ||
         !data.hasOwnProperty('floorType') ||
         !data.hasOwnProperty('laborType') ||

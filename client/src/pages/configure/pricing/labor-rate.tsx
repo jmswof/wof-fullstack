@@ -30,9 +30,12 @@ const LaborRate: React.FC = () => {
   document.title = 'World of Floors - Labor Rate';
   const {user} = useAuthContext();
 
+  const units = ['sqft', 'lnft', 'each'];
+
   const [floorType, setFloorType] = useState<string>('');
   const [laborType, setLaborType] = useState<string>('');
   const [jobService, setJobService] = useState<string>('');
+  const [unit, setUnit] = useState<string>('');
   const [customerCost, setCustomerCost] = useState<string>('');
   const [laborCost, setLaborCost] = useState<string>('');
   const [active, setActive] = useState<boolean>(true);
@@ -144,11 +147,11 @@ const LaborRate: React.FC = () => {
       </Tabs>
 
       <TableContainer sx={{maxHeight: '65vh'}}>
-        <Table stickyHeader>
+        <Table stickyHeader sx={{tableLayout: 'fixed'}}>
           <TableHead>
             <TableRow>
               <TableCell>
-                <FormControl sx={{ m: 1, width: '11rem'}} size='small' required>
+                <FormControl sx={{ m: 1, width: '100%'}} size='small' required>
                   <InputLabel>Labor Type</InputLabel>
                   <Select value={laborType} error={!laborType} onChange={e => setLaborType(e.target.value)} input={<OutlinedInput label="Labor Type" />}>
                     {laborTypes.map( laborType => <MenuItem key={laborType['_id']} value={laborType['_id']}>{laborType['label']}</MenuItem> )}
@@ -156,10 +159,18 @@ const LaborRate: React.FC = () => {
                 </FormControl>
               </TableCell>
               <TableCell>
-                <FormControl sx={{ m: 1, width: '11rem'}} size='small' required>
+                <FormControl sx={{ m: 1, width: '100%'}} size='small' required>
                   <InputLabel>Job Service</InputLabel>
                   <Select error={!jobService} value={jobService} onChange={e => setJobService(e.target.value)} input={<OutlinedInput label="Job Service" />}>
-                    {jobServices.map( jobService => <MenuItem key={jobService['_id']} value={jobService['_id']}>{jobService['label']} ({jobService['unit']})</MenuItem> )}
+                    {jobServices.map( jobService => <MenuItem key={jobService['_id']} value={jobService['_id']}>{jobService['label']}</MenuItem> )}
+                  </Select>
+                </FormControl>
+              </TableCell>
+              <TableCell>
+                <FormControl sx={{ m: 1, width: '100%'}} size='small' required>
+                  <InputLabel>Unit</InputLabel>
+                  <Select error={!unit} value={unit} onChange={e => setUnit(e.target.value)} input={<OutlinedInput label="Unit" />}>
+                    {units.map( unit => <MenuItem key={unit} value={unit}>{unit}</MenuItem> )}
                   </Select>
                 </FormControl>
               </TableCell>
@@ -187,7 +198,7 @@ const LaborRate: React.FC = () => {
               </TableCell>
               <TableCell>
                 <Button fullWidth variant='contained' onClick={submitCreate}>
-                  <Typography>Create Labor Rate</Typography>
+                  <Typography>Create</Typography>
                 </Button>
               </TableCell>
             </TableRow>
@@ -201,6 +212,9 @@ const LaborRate: React.FC = () => {
                 </TableCell>
                 <TableCell>
                   <Typography variant='h6'>{jobServices.find(jobService => jobService['_id'] === laborRate['jobService'])['label']}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography>{laborRate['unit']}</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography>${(+laborRate['customerCost']).toFixed(2)}</Typography>
@@ -217,7 +231,7 @@ const LaborRate: React.FC = () => {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell align='center' colSpan={6}>
+              <TableCell align='center' colSpan={7}>
                 <Typography variant='caption'>
                   {floorTypes[index] && `${laborRates.filter(laborRate => laborRate['floorType'] === floorType).length} ${floorTypes[index]['label']} Labor Rate(s)`}
                 </Typography>

@@ -27,10 +27,7 @@ const JobService: React.FC = () => {
 
   const {user} = useAuthContext();
   const [jobServices, setJobServices] = useState<object[]>([]);
-  const units = ['sqft', 'lnft', 'each'];
-
   const [label, setLabel] = useState<string>('');
-  const [unit, setUnit] = useState<string>('');
   const [active, setActive] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
 
@@ -53,7 +50,7 @@ const JobService: React.FC = () => {
 
   const submitCreate = () => {
     setError('');
-    if (!label || !unit ) {
+    if (!label) {
       setError('Empty form fields cannot be added.');
       return;
     }
@@ -65,15 +62,14 @@ const JobService: React.FC = () => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
       },
-      body: JSON.stringify({label, unit, active})
+      body: JSON.stringify({label, active})
     })
     .then(response => response.json())
     .then(response => {
       if (response.acknowledged === true && response.insertedId != null) {
-        setJobServices([...jobServices, {'_id': response.insertedId, 'label': label, 'unit': unit, 'active': active}]);
+        setJobServices([...jobServices, {'_id': response.insertedId, 'label': label, 'active': active}]);
         setActive(true);
         setLabel('');
-        setUnit('');
       }
     })
     .catch(() => {
@@ -82,10 +78,6 @@ const JobService: React.FC = () => {
   }
 
   return (
-    <Container component={Paper} sx={{my: 5, p: 2}}>
-    <Box display={'flex'} flexDirection={'column'} alignItems={'center'} sx={{m: 2}}>
-      <Typography variant='h3'>Job Services</Typography>
-    </Box>
     <TableContainer sx={{maxHeight: '65vh'}}>
       { error && <Box display={'flex'} sx={{m: 3}} justifyContent={'center'}>
         <Alert variant='standard' color='error'>
@@ -101,18 +93,6 @@ const JobService: React.FC = () => {
                 <InputLabel>Label</InputLabel>
                 <Input value={label} onChange={(e) => setLabel(e.target.value)} />
                 <FormHelperText>New Job Service to display</FormHelperText>
-              </FormControl>
-            </TableCell>
-            <TableCell>
-              <FormControl sx={{ m: 1, width: '13rem'}} size='small'>
-                <InputLabel>Unit of measurement</InputLabel>
-                <Select
-                  value={unit}
-                  onChange={e => setUnit(e.target.value)}
-                  input={<OutlinedInput label="Unit of measurement" />}
-                >
-                  {units.map( (unit, index) => <MenuItem key={index} value={unit}>{unit}</MenuItem> )}
-                </Select>
               </FormControl>
             </TableCell>
             <TableCell>
@@ -135,9 +115,6 @@ const JobService: React.FC = () => {
                 <Typography variant='h6'>{jobService['label']}</Typography>
               </TableCell>
               <TableCell>
-                <Typography>{jobService['unit']}</Typography>
-              </TableCell>
-              <TableCell>
                 <Typography>{jobService['active'] ? 'Yes' : 'No'}</Typography>
               </TableCell>
               <TableCell>
@@ -149,14 +126,13 @@ const JobService: React.FC = () => {
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell align='center' colSpan={4}>
+            <TableCell align='center' colSpan={3}>
               <Typography variant='caption'>{jobServices.length} Job Service(s)</Typography>
             </TableCell>
           </TableRow>
         </TableFooter>
       </Table>
     </TableContainer>
-    </Container>
   );
 };
 

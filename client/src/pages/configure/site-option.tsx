@@ -13,17 +13,19 @@ import USStates from './option/us-states';
 import { useState } from 'react';
 import LaborType from './option/labor-type';
 import Vendor from './option/vendor';
+import JobService from './option/job-service';
 
 const SiteOption: React.FC = () => {
   document.title = 'World of Floors - Site Option';
   const views = {
-    0:'Floor Type',
-    1:'Reference',
-    2:'Color',
-    3:'Priority',
-    4:'US States',
-    5: 'Labor Type',
-    6: 'Vendor'
+    0: 'Floor Type',
+    1: 'Labor Type',
+    2: 'Job Service',
+    3: 'Color',
+    4: 'Priority',
+    5: 'Reference',
+    6: 'Vendor',
+    7: 'US States'
   };
 
   const [index, setIndex] = useState(0);
@@ -36,21 +38,16 @@ const SiteOption: React.FC = () => {
       <Tabs value={index} onChange={(e, index) => {
         setIndex(index);
       }}>
-        <Tab label='Floor Type' />
-        <Tab label='Reference' />
-        <Tab label='Color' />
-        <Tab label='Priority' />
-        <Tab label='US States' />
-        <Tab label='Labor Type' />
-        <Tab label='Vendor' />
+        {Object.keys(views).map(i => <Tab label={views[i]}/>)}
       </Tabs>
 
       {views[index] === 'Floor Type' && <FloorType />}
-      {views[index] === 'Reference' && <Reference />}
+      {views[index] === 'Labor Type' && <LaborType />}
+      {views[index] === 'Job Service' && <JobService />}
       {views[index] === 'Color' && <Color />}
       {views[index] === 'Priority' && <Priority />}
+      {views[index] === 'Reference' && <Reference />}
       {views[index] === 'US States' && <USStates />}
-      {views[index] === 'Labor Type' && <LaborType />}
       {views[index] === 'Vendor' && <Vendor />}
 
     </Container>
