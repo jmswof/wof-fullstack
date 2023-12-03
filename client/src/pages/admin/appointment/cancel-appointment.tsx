@@ -4,6 +4,10 @@ import Button from '@mui/material/Button';
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import Paper from '@mui/material/Paper';
+import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
+import PhoneIcon from '@mui/icons-material/Phone';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,33 +15,27 @@ import TableContainer from '@mui/material/TableContainer';
 import TableFooter from '@mui/material/TableFooter';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
-import PhoneIcon from '@mui/icons-material/Phone';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import { useAuthContext } from '../../../context/AuthContext';
+import AppointmentType from '../../../model/appointment-type';
+import WofRest from '../../../rest/wof-rest';
 import { useEffect, useState } from 'react';
+import dayjs = require('dayjs');
 
 const CancelAppointment: React.FC = () => {
-  document.title = 'World of Floors - Cancel Appointment';
 
-  const [floorTypes, setFloorTypes] = useState<[]>([]);
-  const [ustates, setUStates] = useState<[]>([]);
-  const [references, setReferences] = useState<[]>([]);
-  const [colors, setColors] = useState<[]>([]);
-  const [priorities, setPriorities] = useState<[]>([]);
-  const [saleAgents, setSaleAgents] = useState<object[]>([]);
-  const [appointments, setAppointments] = useState<object[]>([]);
+  document.title = 'World of Floors - Cancel Appointment';
+  const wofRest = WofRest();
+
+  const [appointments, setAppointments] = useState<AppointmentType[]>([]);
 
   const [error, setError] = useState<string>('');
-  const [selection, setSelection] = useState(new Array(appointments.length).fill(''));
-  const {user} = useAuthContext();
+  const [selection, setSelection] = useState<AppointmentType[]>([]);
 
-  const handleSelection = (id:string):void => {
-    const index = selection.indexOf(id);
+  const handleSelection = (appt:AppointmentType):void => {
+    const index = selection.map(select => select._id).indexOf(appt._id);
+
     if (index < 0)
-      selection.push(id);
+      selection.push(appt);
     else
       selection.splice(index, 1);
 
@@ -45,110 +43,26 @@ const CancelAppointment: React.FC = () => {
   }
 
   useEffect(() => {
-    Promise.all([
-      fetch(`${process.env.WOF_SERVER}/configure/us-state?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/reference?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/priority?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/color?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/floor-type?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(process.env.WOF_SERVER + '/configure/sale-agent?type=all', {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'no-cache',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(process.env.WOF_SERVER + '/appointments?type=active', {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'no-cache',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-    ])
-    .then(([ustates, references, priorities, colors, floorTypes, saleAgents, appointments]) => {
-      setUStates(ustates);
-      setReferences(references);
-      setPriorities(priorities);
-      setColors(colors);
-      setFloorTypes(floorTypes);
-      setSaleAgents(saleAgents);
-      setAppointments(appointments);
-    })
-    .catch(error => {
-      console.log(error);
-    })
+    Promise.all([wofRest.appointment.getAll('active')])
+      .then(([appointments]) => setAppointments(appointments))
+      .catch(error => console.log(error))
   }, []);
 
-  const handleSubmit = async () => {
+  const handleDelete = async () => {
     setError('');
     if (selection.length < 1) {
       setError('Nothing is selected');
       return; // Nothing's selected
     }
+
     console.log(selection);
-    await fetch(process.env.WOF_SERVER + '/appointments', {
-      method: 'DELETE',
-      mode: 'cors',
-      cache: 'no-cache',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-      },
-      body: JSON.stringify(selection)
-    })
-    .then(response => response.json())
-    .then(response => {
-      if (response.acknowledged && response.modifiedCount === selection.length) {
-        setAppointments([...appointments.filter(appointment => selection.indexOf(appointment['_id']) < 0)]);
-        setSelection([]);
-      }
-    })
-    .catch(error => {
-      console.log(error);
-    });
+    wofRest.appointment.delete(selection)
+      .then(response => {
+        if (response.acknowledged && response.modifiedCount === selection.length) {
+          setAppointments([...appointments.filter(appointment => selection.map(select => select._id).indexOf(appointment._id) < 0)]);
+          setSelection([]);
+        }
+      }).catch(error => console.log(error));
   }
   
   return (
@@ -168,9 +82,7 @@ const CancelAppointment: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell align='center'>
-                <Button fullWidth onClick={() => {
-                  console.log(selection);
-                }}>
+                <Button fullWidth onClick={handleDelete}>
                   <CancelPresentationIcon fontSize='small' />
                 </Button>
               </TableCell>
@@ -183,21 +95,17 @@ const CancelAppointment: React.FC = () => {
           </TableHead>
           <TableBody>
             { appointments.map(appointment =>
-              <TableRow key={appointment['_id']}>
+              <TableRow key={appointment._id}>
                 <TableCell align='center'>
-                  <Checkbox onChange={(e:any):void => handleSelection(appointment['_id'])} checked={selection.some(id => id === appointment['_id'])}/>
+                  <Checkbox onChange={(e:any):void => handleSelection(appointment)} checked={selection.some(select => select._id === appointment._id)}/>
                 </TableCell>
                 <TableCell>
                   <Box sx={{ p: 1 }}>
                     <Box>
-                      <Typography variant='caption'>
-                        {(new Date(appointment['date'])).toLocaleDateString()}
-                      </Typography>
+                      <Typography variant='caption'>{dayjs(appointment.date).format('MM/DD/YYYY')}</Typography>
                     </Box>
                     <Box>
-                      <Typography variant='caption'>
-                        {(new Date(appointment['date'])).toLocaleTimeString()}
-                      </Typography>
+                      <Typography variant='caption'>{dayjs(appointment.date).format('HH:mmA')}</Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
@@ -208,16 +116,16 @@ const CancelAppointment: React.FC = () => {
                 </TableCell>
                 <TableCell>
                   <Typography variant='h6'>
-                    { appointment['agent'] && saleAgents.find(saleAgent => saleAgent['_id'] === appointment['agent'])['firstName']} { appointment['agent'] && saleAgents.find(saleAgent => saleAgent['_id'] === appointment['agent'])['lastName']}
+                    { appointment.agent && appointment.agent.firstName} { appointment.agent && appointment.agent.lastName }
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Box sx={{ p: 1 }}>
-                    <Box><Typography variant='caption'>{appointment['customer'].lastName}, {appointment['customer'].firstName}</Typography></Box>
-                    <Box><Typography variant='caption'>{appointment['customer'].address.street1}</Typography></Box>
+                    <Box><Typography variant='caption'>{appointment.customer.lastName}, {appointment.customer.firstName}</Typography></Box>
+                    <Box><Typography variant='caption'>{appointment.customer.address.street1}</Typography></Box>
                     <Box>
                       <Typography variant='caption'>
-                        {appointment['customer'].address.city} { ustates.find(state => state['_id'] === appointment['customer'].address.ustate)['short'] } {appointment['customer'].address.zipCode}
+                        {appointment.customer.address.city} { appointment.customer.address.ustate.short } {appointment.customer.address.zipCode}
                       </Typography>
                     </Box>
                   </Box>
@@ -225,38 +133,32 @@ const CancelAppointment: React.FC = () => {
                 <TableCell>
                   <Box display={'flex'} flexDirection={'row'}>
                     <PhoneIcon fontSize='small' sx={{ mr: 1 }} />
-                    <Typography variant='caption'>
-                      {appointment['customer'].phoneNumber}
-                    </Typography>
+                    <Typography variant='caption'>{appointment.customer.phoneNumber}</Typography>
                   </Box>
                   <Box display={'flex'} flexDirection={'row'}>
                     <PhoneIphoneIcon fontSize='small' sx={{ mr: 1 }} />
-                    <Typography variant='caption'>
-                      {appointment['customer'].mobileNumber}
-                    </Typography>
+                    <Typography variant='caption'>{appointment.customer.mobileNumber}</Typography>
                   </Box>
                   <Box display={'flex'} flexDirection={'row'}>
                     <MailOutlineIcon fontSize='small' sx={{ mr: 1 }} />
-                    <Typography variant='caption'>
-                      {appointment['customer'].email}
-                    </Typography>
+                    <Typography variant='caption'>{appointment.customer.email}</Typography>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box sx={{ p: 1 }}>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Color</b> {colors.filter(color => appointment['colorPreference'].includes(color['_id'])).map(color => color['label']).join(', ')}
+                        <b>Color</b> {appointment.colorPreference.map(color => color.label).join(', ')}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Floor</b> {floorTypes.filter(floorType => appointment['floorType'].includes(floorType['_id'])).map(floorType => floorType['label']).join(', ')}
+                        <b>Floor</b> {appointment.floorType.map(floorType => floorType.label).join(', ')}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Reference</b> {references.filter(reference => appointment['reference'].includes(reference['_id'])).map(reference => reference['label']).join(', ')}
+                        <b>Reference</b> {appointment.reference.map(reference => reference.label).join(', ')}
                       </Typography>
                     </Box>
                   </Box>
@@ -265,7 +167,7 @@ const CancelAppointment: React.FC = () => {
             )}
             <TableRow>
               <TableCell align='center' colSpan={6}>
-                <Button variant='contained' fullWidth onClick={handleSubmit}>
+                <Button variant='contained' fullWidth onClick={handleDelete}>
                   Cancel Appointment
                 </Button>
               </TableCell>

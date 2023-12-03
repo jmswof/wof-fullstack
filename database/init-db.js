@@ -24,7 +24,7 @@ async function run() {
     const jobServices = await initJobServices();
     const vendors = await initVendor();
     const saleAgents = await initSaleAgents(firebaseUsers);
-    const appointments = await initAppointments(colors, floorTypes, priorities, references, saleAgents, states);
+    const appointments = await initAppointments(colors, firebaseUsers, floorTypes, priorities, references, saleAgents, states);
 
     [
       firebaseUsers,

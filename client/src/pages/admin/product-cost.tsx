@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
@@ -20,92 +21,39 @@ import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import OptionType from '../../model/option-type';
-import ProductCostType from '../../model/product-cost';
-import { useAuthContext } from '../../context/AuthContext';
-import {useEffect, useState} from 'react';
-import { FilterOptionsState, createFilterOptions } from '@mui/material';
-
-const filter = createFilterOptions<OptionType>();
-
-const filterOptions = (options:OptionType[], params: FilterOptionsState<OptionType>) => {
-  const filtered = filter(options, params);
-  if (params.inputValue !== '' && !options.some(option => params.inputValue === option.label)) {
-    filtered.push({
-      inputValue: params.inputValue,
-      label: `New "${params.inputValue}"`,
-      active: true
-    });
-  }
-  return filtered;
-};
-
-const optionLabel = (option) => {
-  if (typeof option === 'object') {
-    if (option.inputValue)
-      return option.inputValue;
-
-    return option.label;
-  }
-  return option;
-};
+import ProductCostType from '../../model/product-cost-type';
+import WofRest from '../../rest/wof-rest';
+import { filterOptions, optionLabel } from '../../model/option-type-filter';
 
 const ProductCost: React.FC = () => {
-
   document.title = 'World of Floors - Product Cost';
 
-  const {user} = useAuthContext();
+  const wofRest = WofRest();
+
   const [floorTypes, setFloorTypes] = useState<OptionType[]>([]);
-  const [vendors, setVendors] = useState<OptionType[]>([]);
-  const [productCosts, setProductCosts] = useState<ProductCostType[]>([]);
-  const [productCategories, setProductCategories] = useState<OptionType[]>([]);
   const [productBrands, setProductBrands] = useState<OptionType[]>([]);
-  const [vendor, setVendor] = useState<OptionType | null>(null);
-  const [productCategory, setProductCategory] = useState<OptionType | null>(null);
-  const [productBrand, setProductBrand] = useState<OptionType | null>(null);
-  const [floorType, setFloorType] = useState<OptionType | null>(null);
+  const [productCategories, setProductCategories] = useState<OptionType[]>([]);
+  const [productCosts, setProductCosts] = useState<ProductCostType[]>([]);
+  const [vendors, setVendors] = useState<OptionType[]>([]);
+
+  const [active, setActive] = useState<boolean>(true);
   const [boxCost, setBoxCost] = useState<number>(0);
+  const [floorType, setFloorType] = useState<OptionType | null>(null);
   const [palletCost, setPalletCost] = useState<number>(0);
+  const [productBrand, setProductBrand] = useState<OptionType | null>(null);
+  const [productCategory, setProductCategory] = useState<OptionType | null>(null);
+  const [vendor, setVendor] = useState<OptionType | null>(null);
+
   const [error, setError] = useState<string>('');
   const [index, setIndex]= useState<number>(0);
-  const [active, setActive] = useState<boolean>(true);
 
   useEffect(() => {
     Promise.all([
-      fetch(`${process.env.WOF_SERVER}/configure/floor-type?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      }).then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/product-brand?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      }).then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/product-category?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      }).then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/product-cost?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      }).then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/vendor?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      }).then(response => response.json())
+      wofRest.floorType.getAll('all'),
+      wofRest.productBrand.getAll('all'),
+      wofRest.productCategory.getAll('all'),
+      wofRest.productCost.getAll('all'),
+      wofRest.vendor.getAll('all')
     ])
     .then(([floorTypes, productBrands, productCategories, productCosts, vendors]) => {
       setIndex(0);
@@ -120,44 +68,27 @@ const ProductCost: React.FC = () => {
 
   const submitCreate = () => {
     setError('');
-    console.log(!boxCost, !palletCost, !floorType, !productBrand, !productCategory, !vendor);
     if (!boxCost || !floorType || !palletCost || !vendor || !productBrand || !productCategory) {
       setError('Empty form fields cannot be added.');
       return;
     }
 
-    fetch(`${process.env.WOF_SERVER}/configure/product-cost`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-      },
-      body: JSON.stringify({
-        active,
-        boxCost,
-        floorType,
-        palletCost,
-        productBrand,
-        productCategory,
-        vendor
+    wofRest.productCost
+      .create({active, boxCost, floorType, palletCost, productBrand, productCategory, vendor})
+      .then(response => {
+        if (response.acknowledged === true && response.insertedId != null) {
+          setProductCosts([...productCosts, {'_id': response.insertedId, active, boxCost, floorType, palletCost, productBrand, productCategory, vendor}]);
+          setActive(true);
+          setBoxCost(0);
+          setPalletCost(0);
+          setProductBrand(null);
+          setProductCategory(null);
+          setVendor(null);
+        }
       })
-    })
-    .then(response => response.json())
-    .then(response => {
-      if (response.acknowledged === true && response.insertedId != null) {
-        setProductCosts([...productCosts, {'_id': response.insertedId, active, boxCost, floorType, palletCost, productBrand, productCategory, vendor}]);
-        setActive(true);
-        setBoxCost(0);
-        setPalletCost(0);
-        setProductBrand(null);
-        setProductCategory(null);
-        setVendor(null);
-      }
-    })
-    .catch(() => {
-      setError('Please check your form data and try again.');
-    })
+      .catch(() => {
+        setError('Please check your form data and try again.');
+      })
   }
   
   return (
@@ -191,24 +122,15 @@ const ProductCost: React.FC = () => {
                   onChange={(event, option) => {
                     if (option['inputValue']) {
                       // a completely new option
-                      fetch(`${process.env.WOF_SERVER}/configure/product-category`, {
-                        method: 'POST',
-                        headers: {
-                          'Accept': 'application/json',
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-                        },
-                        body: JSON.stringify({label: option['inputValue'], active: true})
-                      })
-                      .then(response => response.json())
-                      .then(response => {
-                        if (response.acknowledged === true && response.insertedId != null) {
-                          const pc = {'_id': response.insertedId, 'label': option['inputValue'], 'active': true};
-                          setProductCategories([...productCategories, pc]);
-                          setProductCategory(pc);
-                        }
-                      })
-                      .catch((error) => console.log(error) )
+                      wofRest.productCategory.create(option['inputValue'], true)
+                        .then(response => {
+                          if (response.acknowledged === true && response.insertedId != null) {
+                            const pc = {'_id': response.insertedId, 'label': option['inputValue'], 'active': true};
+                            setProductCategories([...productCategories, pc]);
+                            setProductCategory(pc);
+                          }
+                        })
+                        .catch((error) => console.log(error))
                     } else if (typeof option === 'object') {
                       // valid existing option was selected
                       setProductCategory(option);
@@ -225,24 +147,15 @@ const ProductCost: React.FC = () => {
                   onChange={(event, option) => {
                     if (option['inputValue']) {
                       // a completely new option
-                      fetch(`${process.env.WOF_SERVER}/configure/product-brand`, {
-                        method: 'POST',
-                        headers: {
-                          'Accept': 'application/json',
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-                        },
-                        body: JSON.stringify({label: option['inputValue'], active: true})
-                      })
-                      .then(response => response.json())
-                      .then(response => {
-                        if (response.acknowledged === true && response.insertedId != null) {
-                          const pb = {'_id': response.insertedId, 'label': option['inputValue'], 'active': true};
-                          setProductBrands([...productBrands, pb]);
-                          setProductBrand(pb);
-                        }
-                      })
-                      .catch((error) => console.log(error) )
+                      wofRest.productBrand.create(option['inputValue'], true)
+                        .then(response => {
+                          if (response.acknowledged === true && response.insertedId != null) {
+                            const pb = {'_id': response.insertedId, 'label': option['inputValue'], 'active': true};
+                            setProductBrands([...productBrands, pb]);
+                            setProductBrand(pb);
+                          }
+                        })
+                        .catch((error) => console.log(error))
                     } else if (typeof option === 'object') {
                       // valid existing option was selected
                       setProductBrand(option);
@@ -259,24 +172,15 @@ const ProductCost: React.FC = () => {
                   onChange={(event, option) => {
                     if (option['inputValue']) {
                       // a completely new option
-                      fetch(`${process.env.WOF_SERVER}/configure/vendor`, {
-                        method: 'POST',
-                        headers: {
-                          'Accept': 'application/json',
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-                        },
-                        body: JSON.stringify({label: option['inputValue'], active: true})
-                      })
-                      .then(response => response.json())
-                      .then(response => {
-                        if (response.acknowledged === true && response.insertedId != null) {
-                          const v = {'_id': response.insertedId, 'label': option['inputValue'], 'active': true};
-                          setVendors([...vendors, v]);
-                          setVendor(v);
-                        }
-                      })
-                      .catch((error) => console.log(error) )
+                      wofRest.vendor.create(option['inputValue'], true)
+                        .then(response => {
+                          if (response.acknowledged === true && response.insertedId != null) {
+                            const v = {'_id': response.insertedId, 'label': option['inputValue'], 'active': true};
+                            setVendors([...vendors, v]);
+                            setVendor(v);
+                          }
+                        })
+                        .catch((error) => console.log(error))
                     } else if (typeof option === 'object') {
                       // valid existing option was selected
                       setVendor(option);

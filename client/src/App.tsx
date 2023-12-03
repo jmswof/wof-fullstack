@@ -26,7 +26,7 @@ import ListAppointment from './pages/admin/appointment/list-appointment';
 import ManageAppointment from './pages/admin/appointment/manage-appointment';
 import CostRate from './pages/configure/cost-rate';
 import ContractorRate from './pages/configure/contractor-rate';
-import LaborRate from './pages/configure/pricing/labor-rate';
+import LaborRate from './pages/admin/labor-rate';
 import ProductCost from './pages/admin/product-cost';
 import RetailPrice from './pages/admin/retail-price';
 

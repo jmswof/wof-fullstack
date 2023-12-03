@@ -83,14 +83,14 @@ const initRest = (wss, app, route) => {
 
     // PATCH /appointments (UPDATE) ASSIGN AGENT TO APPOINTMENT
     app.patch(route, cors(), async (request, response) => {
-      let data = [];
-      Object.keys(request.body).forEach(async apptId => {
-        data.push(await appointments.updateOne(
-          {_id: new ObjectId(apptId)},
-          { $set: { agent: request.body[apptId] }},
+
+      const data = request.body.map(
+        async (data) => await appointments.updateOne(
+          { _id: new ObjectId(data.appointment._id) },
+          { $set: { agent: data.saleAgent }},
           {}
-        ));
-      });
+        )
+      );
       response.json(data);
       console.log(`[HTTP][PATCH] ${route}: ${request.token.email} updated ${data.length} appointment(s).`);
     });
@@ -137,7 +137,7 @@ const initRest = (wss, app, route) => {
     app.delete(route, cors(), async (request, response) => {
       response.json(
         await appointments.updateMany(
-          { _id: { $in: request.body.map(id => (new ObjectId(id))) } },
+          { _id: { $in: request.body.map(appointment => (new ObjectId(appointment._id))) } },
           { $set: { active: false }}
         )
       );

@@ -12,100 +12,26 @@ import Typography from '@mui/material/Typography';
 import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
 import PhoneIcon from '@mui/icons-material/Phone';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import { useAuthContext } from '../../../context/AuthContext';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AppointmentType from '../../../model/appointment-type';
+import WofRest from '../../../rest/wof-rest';
+import dayjs = require('dayjs');
 
 const ListAppointment: React.FC = () => {
-  document.title = 'World of Floors - List Appointment';
 
+  document.title = 'World of Floors - List Appointment';
   const navigate = useNavigate();
-  const [saleAgents, setSaleAgents] = useState<object[]>([]);
-  const [appointments, setAppointments] = useState<object[]>([]);
-  const [ustates, setUStates] = useState<object[]>([]);
-  const [floorTypes, setFloorTypes] = useState<object[]>([]);
-  const [colors, setColors] = useState<object[]>([]); 
-  const [priorities, setPriorities] = useState<object[]>([]);
-  const [references, setReferences] = useState<object[]>([]);
-  const {user} = useAuthContext();
+  const wofRest = WofRest();
+
+  const [appointments, setAppointments] = useState<AppointmentType[]>([]);
 
   useEffect(() => {
-    Promise.all([
-      fetch(process.env.WOF_SERVER + '/configure/sale-agent?type=all', {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'no-cache',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/us-state?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/reference?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/priority?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/color?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/floor-type?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/appointments`, {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'no-cache',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json())
-    ])
-    .then(([saleAgents, ustates, references, priorities, colors, floorTypes, appointments]) => {
-      setSaleAgents(saleAgents);
-      setUStates(ustates);
-      setReferences(references);
-      setPriorities(priorities);
-      setColors(colors);
-      setFloorTypes(floorTypes);
-      setAppointments(appointments);
-    })
-    .catch(error => {
-      console.log(error);
-    })
-  }, []);
-  
+    Promise.all([wofRest.appointment.getAll('all')])
+      .then(([appointments]) => setAppointments(appointments))
+      .catch(error => console.log(error));
+  }, []);0
+
   return (
     <Container component={Paper} sx={{my: 5, p: 2}}>
       <Box display={'flex'} flexDirection={'column'} alignItems={'center'} sx={{m: 2}}>
@@ -116,51 +42,48 @@ const ListAppointment: React.FC = () => {
         <Table stickyHeader sx={{tableLayout: 'fixed'}}>
           <TableHead>
             <TableRow>
-              <TableCell align='center'>Date</TableCell>
-              <TableCell align='center'>Status</TableCell>
-              <TableCell align='center'>Sale Agent</TableCell>
-              <TableCell align='center'>Customer</TableCell>
-              <TableCell align='center'>Contact</TableCell>
-              <TableCell align='center'>Extras</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Sale Agent</TableCell>
+              <TableCell>Customer</TableCell>
+              <TableCell>Contact</TableCell>
+              <TableCell>Extras</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             { appointments.map(appointment =>
-              <TableRow key={appointment['_id']} sx={{ cursor: 'pointer' }} onClick={() => navigate(`/admin/appointment/${appointment['_id']}`)}>
+              <TableRow key={appointment._id} sx={{ cursor: 'pointer' }} onClick={() => navigate(`/admin/appointment/${appointment._id}`)}>
                 <TableCell>
                   <Box sx={{ p: 1 }}>
                     <Box>
-                      <Typography variant='caption'>
-                        {(new Date(appointment['date'])).toLocaleDateString()}
-                      </Typography>
+                      <Typography variant='caption'>{dayjs(appointment.date).format('MM/DD/YYYY')}</Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant='caption'>{dayjs(appointment.date).format('HH:mmA')}</Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        {(new Date(appointment['date'])).toLocaleTimeString()}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant='caption'>
-                        {appointment['customer'].address.isResidential ? 'Residential' : 'Business'}
+                        {appointment.customer.address.isResidential ? 'Residential' : 'Business'}
                       </Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
-                  <Typography>{appointment['active'] ? 'Active': 'Canceled'}</Typography>
+                  <Typography>{appointment.active ? 'Active': 'Canceled'}</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography variant='h6'>
-                    { appointment['agent'] && saleAgents.find(saleAgent => saleAgent['_id'] === appointment['agent'])['firstName']} { appointment['agent'] && saleAgents.find(saleAgent => saleAgent['_id'] === appointment['agent'])['lastName']}
+                    { !appointment.agent && 'Unassigned'}
+                    { appointment.agent && appointment.agent.firstName } { appointment.agent && appointment.agent.lastName}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Box sx={{ p: 1 }}>
-                    <Box><Typography variant='caption'>{appointment['customer'].lastName}, {appointment['customer'].firstName}</Typography></Box>
-                    <Box><Typography variant='caption'>{appointment['customer'].address.street1}</Typography></Box>
+                    <Box><Typography variant='caption'>{appointment.customer.lastName}, {appointment.customer.firstName}</Typography></Box>
+                    <Box><Typography variant='caption'>{appointment.customer.address.street1}</Typography></Box>
                     <Box>
                       <Typography variant='caption'>
-                        {appointment['customer'].address.city} { ustates.find(state => state['_id'] === appointment['customer'].address.ustate)['short'] } {appointment['customer'].address.zipCode}
+                        {appointment.customer.address.city} {appointment.customer.address.zipCode} {appointment.customer.address.ustate.short}
                       </Typography>
                     </Box>
                   </Box>
@@ -168,38 +91,32 @@ const ListAppointment: React.FC = () => {
                 <TableCell>
                   <Box display={'flex'} flexDirection={'row'}>
                     <PhoneIcon fontSize='small' sx={{ mr: 1 }} />
-                    <Typography variant='caption'>
-                      {appointment['customer'].phoneNumber}
-                    </Typography>
+                    <Typography variant='caption'>{appointment.customer.phoneNumber}</Typography>
                   </Box>
                   <Box display={'flex'} flexDirection={'row'}>
                     <PhoneIphoneIcon fontSize='small' sx={{ mr: 1 }} />
-                    <Typography variant='caption'>
-                      {appointment['customer'].mobileNumber}
-                    </Typography>
+                    <Typography variant='caption'>{appointment.customer.mobileNumber}</Typography>
                   </Box>
                   <Box display={'flex'} flexDirection={'row'}>
                     <MailOutlineIcon fontSize='small' sx={{ mr: 1 }} />
-                    <Typography variant='caption'>
-                      {appointment['customer'].email}
-                    </Typography>
+                    <Typography variant='caption'>{appointment.customer.email}</Typography>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box sx={{ p: 1 }}>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Color</b> {colors.filter(color => appointment['colorPreference'].includes(color['_id'])).map(color => color['label']).join(', ')}
+                        <b>Color</b> {appointment.colorPreference.map(color => color.label).join(', ')}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Floor</b> {floorTypes.filter(floorType => appointment['floorType'].includes(floorType['_id'])).map(floorType => floorType['label']).join(', ')}
+                        <b>Floor</b> {appointment.floorType.map(floorType => floorType.label).join(', ')}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Reference</b> {references.filter(reference => appointment['reference'].includes(reference['_id'])).map(reference => reference['label']).join(', ')}
+                        <b>Reference</b> {appointment.reference.map(reference => reference.label).join(', ')}
                       </Typography>
                     </Box>
                   </Box>

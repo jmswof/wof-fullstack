@@ -9,29 +9,22 @@ import TableHead from '@mui/material/TableHead';
 import TableFooter from '@mui/material/TableFooter';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import { useAuthContext } from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
+
+import WofRest from '../../rest/wof-rest';
+import FirebaseUserType from '../../model/firebase-user-type';
 
 const FirebaseUsers: React.FC = () => {
   document.title = 'World of Floors - Firebase Users';
 
-  const {user} = useAuthContext();
+  const wofRest = WofRest();
 
-  const [firebaseUsers, setFirebaseUsers] = useState<[]>([]);
+  const [firebaseUsers, setFirebaseUsers] = useState<FirebaseUserType[]>([]);
 
   useEffect(() => {
-    fetch(`${process.env.WOF_SERVER}/configure/firebase-user?type=all`, {
-      method: 'GET',
-      mode: 'cors',
-      cache: 'no-cache',
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-      }
-    })
-    .then(response => response.json())
-    .then(response => setFirebaseUsers(response))
-    .catch(error => console.log(error));
+    wofRest.firebaseUser.getAll('all')
+      .then(response => setFirebaseUsers(response))
+      .catch(error => console.log(error));
   }, []);
   
   return (
@@ -52,14 +45,14 @@ const FirebaseUsers: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {firebaseUsers.map((firebaseUser, index) => (
-              <TableRow key={firebaseUser['uid']}>
+            {firebaseUsers.map((user, index) => (
+              <TableRow key={user['uid']}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{firebaseUser['email']}</TableCell>
-                <TableCell>{firebaseUser['emailVerified'] ? 'Yes' : 'No'}</TableCell>
-                <TableCell>{firebaseUser['disabled'] ? 'Yes' : 'No'}</TableCell>
-                <TableCell>{firebaseUser['creationTime']}</TableCell>
-                <TableCell>{firebaseUser['lastSignInTime']}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.emailVerified ? 'Yes' : 'No'}</TableCell>
+                <TableCell>{user.disabled ? 'Yes' : 'No'}</TableCell>
+                <TableCell>{`${user.creationTime}`}</TableCell>
+                <TableCell>{`${user.lastSignInTime}`}</TableCell>
               </TableRow>
             ))}
           </TableBody>

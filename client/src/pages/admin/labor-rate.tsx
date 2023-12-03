@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
@@ -23,95 +24,47 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import OptionType from '../../../model/option-type';
-import { useAuthContext } from '../../../context/AuthContext';
-import { useEffect, useState } from 'react';
-import { FilterOptionsState, createFilterOptions } from '@mui/material';
-
-const filter = createFilterOptions<OptionType>();
-
-const filterOptions = (options:OptionType[], params: FilterOptionsState<OptionType>) => {
-  const filtered = filter(options, params);
-  if (params.inputValue !== '' && !options.some(option => params.inputValue === option.label)) {
-    filtered.push({
-      inputValue: params.inputValue,
-      label: `New "${params.inputValue}"`,
-      active: true
-    });
-  }
-  return filtered;
-};
-
-const optionLabel = (option) => {
-  if (typeof option === 'object') {
-    if (option.inputValue)
-      return option.inputValue;
-
-    return option.label;
-  }
-  return option;
-};
+import OptionType from '../../model/option-type';
+import WofRest from '../../rest/wof-rest';
+import { filterOptions, optionLabel } from '../../model/option-type-filter';
 
 const LaborRate: React.FC = () => {
 
   document.title = 'World of Floors - Labor Rate';
-  const {user} = useAuthContext();
+
+  const wofRest = WofRest();
 
   const units = ['sqft', 'lnft', 'each'];
 
-  const [floorType, setFloorType] = useState<OptionType | null>(null);
-  const [laborType, setLaborType] = useState<OptionType | null>(null);
-  const [jobService, setJobService] = useState<OptionType | null>(null);
-  const [unit, setUnit] = useState<string>('');
-  const [customerCost, setCustomerCost] = useState<string>('');
-  const [laborCost, setLaborCost] = useState<string>('');
   const [active, setActive] = useState<boolean>(true);
+  const [customerCost, setCustomerCost] = useState<string>('');
+  const [floorType, setFloorType] = useState<OptionType | null>(null);
+  const [jobService, setJobService] = useState<OptionType | null>(null);
+  const [laborCost, setLaborCost] = useState<string>('');
+  const [laborType, setLaborType] = useState<OptionType | null>(null);
+  const [unit, setUnit] = useState<string>('');
 
   const [error, setError] = useState<string>('');
   const [index, setIndex] = useState<number>(0);
 
-  const [laborRates, setLaborRates] = useState<object[]>([null]);
-  const [floorTypes, setFloorTypes] = useState<OptionType[]>([null]);
-  const [laborTypes, setLaborTypes] = useState<OptionType[]>([null]);
-  const [jobServices, setJobServices] = useState<OptionType[]>([null]);
+  const [floorTypes, setFloorTypes] = useState<OptionType[]>([]);
+  const [jobServices, setJobServices] = useState<OptionType[]>([]);
+  const [laborRates, setLaborRates] = useState<object[]>([]);
+  const [laborTypes, setLaborTypes] = useState<OptionType[]>([]);
 
   useEffect(() => {
     Promise.all([
-      fetch(`${process.env.WOF_SERVER}/configure/labor-rate?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      }).then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/labor-type?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      }).then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/floor-type?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      }).then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/job-service?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      }).then(response => response.json()),
-    ]).then(([laborRates, laborTypes, floorTypes, jobServices]) => {
-      setLaborRates(laborRates);
-      setLaborTypes(laborTypes);
-      setFloorTypes(floorTypes);
-      setJobServices(jobServices);
+      wofRest.floorType.getAll('all'),
+      wofRest.jobService.getAll('all'),
+      wofRest.laborRate.getAll('all'),
+      wofRest.laborType.getAll('all')
+    ]).then(([floorTypes, jobServices, laborRates, laborTypes]) => {
       setIndex(0);
       setFloorType(floorTypes[0]);
+      setFloorTypes(floorTypes);
+      setJobServices(jobServices);
+      setLaborRates(laborRates);
+      setLaborTypes(laborTypes);
     }).catch(error => {
       console.log('errored out');
     });
@@ -125,38 +78,19 @@ const LaborRate: React.FC = () => {
       return;
     }
 
-    fetch(`${process.env.WOF_SERVER}/configure/labor-rate`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-      },
-      body: JSON.stringify({
-        active,
-        customerCost,
-        floorType,
-        jobService,
-        laborCost,
-        laborType,
-        unit
-      })
-    })
-    .then(response => response.json())
+    wofRest.laborRate.create(active, customerCost, floorType, jobService, laborCost, laborType, unit)
     .then(response => {
       if (response.acknowledged === true && response.insertedId != null) {
         setLaborRates([...laborRates, {'_id': response.insertedId, floorType, jobService, laborType, laborCost, customerCost, unit, active}]);
+        setActive(true);
+        setCustomerCost('');
         setJobService(null);
+        setLaborCost('');
         setLaborType(null);
         setUnit('');
-        setLaborCost('');
-        setCustomerCost('');
-        setActive(true);
       }
     })
-    .catch(() => {
-      setError('Please check your form data and try again.');
-    })
+    .catch(() => setError('Please check your form data and try again.'))
   }
 
   return (
@@ -191,16 +125,7 @@ const LaborRate: React.FC = () => {
                     onChange={(event, option) => {
                       if (option['inputValue']) {
                         // a completely new option
-                        fetch(`${process.env.WOF_SERVER}/configure/labor-type`, {
-                          method: 'POST',
-                          headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-                          },
-                          body: JSON.stringify({label: option['inputValue'], active: true})
-                        })
-                        .then(response => response.json())
+                        wofRest.laborType.create(option['inputValue'], true)
                         .then(response => {
                           if (response.acknowledged === true && response.insertedId != null) {
                             const lt = {'_id': response.insertedId, 'label': option['inputValue'], 'active': true};
@@ -208,7 +133,7 @@ const LaborRate: React.FC = () => {
                             setLaborType(lt);
                           }
                         })
-                        .catch((error) => console.log(error) )
+                        .catch((error) => console.log(error))
                       } else if (typeof option === 'object') {
                         // valid existing option was selected
                         setLaborType(option);
@@ -229,25 +154,15 @@ const LaborRate: React.FC = () => {
                   onChange={(event, option) => {
                     if (option['inputValue']) {
                       // a completely new option
-                      console.log('new value was entered, do a REST call to add new jobService, then setJobServices(response), setJobService(jobService)')
-                      fetch(`${process.env.WOF_SERVER}/configure/job-service`, {
-                        method: 'POST',
-                        headers: {
-                          'Accept': 'application/json',
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-                        },
-                        body: JSON.stringify({label: option['inputValue'], active: true})
-                      })
-                      .then(response => response.json())
-                      .then(response => {
-                        if (response.acknowledged === true && response.insertedId != null) {
-                          const js = {'_id': response.insertedId, 'label': option['inputValue'], 'active': true};
-                          setJobServices([...jobServices, js ]);
-                          setJobService(js);
-                        }
-                      })
-                      .catch((error) => console.log(error))
+                      wofRest.jobService.create(option['inputValue'], true)
+                        .then(response => {
+                          if (response.acknowledged === true && response.insertedId != null) {
+                            const js = {'_id': response.insertedId, 'label': option['inputValue'], 'active': true};
+                            setJobServices([...jobServices, js ]);
+                            setJobService(js);
+                          }
+                        })
+                        .catch((error) => console.log(error))
                     } else if (typeof option === 'object') {
                       // valid existing option was selected
                       setJobService(option);
@@ -260,17 +175,18 @@ const LaborRate: React.FC = () => {
               <TableCell>
                 <FormControl sx={{ width: '100%'}} required>
                   <InputLabel error={!unit}>Unit</InputLabel>
-                  <Select error={!unit} value={unit} onChange={e => setUnit(e.target.value)} input={<OutlinedInput label="Unit" error={!unit} />}>
-                    {units.map( unit => <MenuItem key={unit} value={unit}>{unit}</MenuItem> )}
+                  <Select value={unit} error={!unit} 
+                    onChange={e => setUnit(e.target.value)}
+                    input={<OutlinedInput label="Unit" error={!unit} />}
+                  >
+                    { units.map( unit => <MenuItem key={unit} value={unit}>{unit}</MenuItem> ) }
                   </Select>
                 </FormControl>
               </TableCell>
               <TableCell>
                 <FormControl required sx={{ width: '100%'}}>
-                  <TextField label='Customer Cost' type='number' value={customerCost} onChange={(e) => { 
-                      setCustomerCost(e.target.value)
-                    }}
-                     error={!customerCost}
+                  <TextField label='Customer Cost' type='number' value={customerCost} error={!customerCost}
+                    onChange={(e) => setCustomerCost(e.target.value)}
                     inputProps={{ step: 0.01 }}
                     InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
                   />
@@ -278,7 +194,8 @@ const LaborRate: React.FC = () => {
               </TableCell>
               <TableCell>
                 <FormControl required sx={{ width: '100%'}}>
-                  <TextField label='Labor Cost' value={laborCost} type='number' onChange={(e) => setLaborCost(e.target.value)} error={!laborCost}
+                  <TextField label='Labor Cost' type='number' value={laborCost} error={!laborCost}
+                    onChange={(e) => setLaborCost(e.target.value)}
                     inputProps={{ step: 0.01 }}
                     InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
                   />

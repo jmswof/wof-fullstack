@@ -1,11 +1,13 @@
+import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import Select from '@mui/material/Select';
+import Typography from '@mui/material/Typography';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import Paper from '@mui/material/Paper';
+import PhoneIcon from '@mui/icons-material/Phone';
+import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -13,125 +15,59 @@ import TableContainer from '@mui/material/TableContainer';
 import TableFooter from '@mui/material/TableFooter';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
-import PhoneIcon from '@mui/icons-material/Phone';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import { useAuthContext } from '../../../context/AuthContext';
+import TextField from '@mui/material/TextField';
 import { useEffect, useState } from 'react';
+import WofRest from '../../../rest/wof-rest';
+import SaleAgentType from '../../../model/sale-agent-type';
+import AppointmentType from '../../../model/appointment-type';
+import dayjs = require('dayjs');
+import DelegateAppointmentType from '../../../model/delegate-appointment-type';
 
 const DelegateAppointment: React.FC = () => {
 
   document.title = 'World of Floors - Delegate Appointment';
+  const wofRest = WofRest();
 
-  const [floorTypes, setFloorTypes] = useState<[]>([]);
-  const [ustates, setUStates] = useState<[]>([]);
-  const [references, setReferences] = useState<[]>([]);
-  const [colors, setColors] = useState<[]>([]);
-  const [priorities, setPriorities] = useState<[]>([]);
-  const [agents, setAgents] = useState<object[]>([{}]);
-  const [appointments, setAppointments] = useState<object[]>([]);
-  const [delegate, setDelegate] = useState<{}>({});
-  const {user} = useAuthContext();
+  const [saleAgents, setSaleAgents] = useState<SaleAgentType[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentType[]>([]);
+  const [delegation, setDelegation] = useState<DelegateAppointmentType[]>([]);
 
   useEffect(() => {
     Promise.all([
-      fetch(`${process.env.WOF_SERVER}/configure/us-state?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/reference?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/priority?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/color?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/floor-type?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(process.env.WOF_SERVER + '/configure/sale-agent?type=all', {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'no-cache',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(process.env.WOF_SERVER + '/appointments?type=unassigned', {
-        method: 'GET',
-        mode: 'cors',
-        cache: 'no-cache',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-    ])
-    .then(([ustates, references, priorities, colors, floorTypes, agents, appointments]) => {
-      setUStates(ustates);
-      setReferences(references);
-      setPriorities(priorities);
-      setColors(colors);
-      setFloorTypes(floorTypes);
-      setAgents(agents);
+      wofRest.saleAgent.getAll('all'),
+      wofRest.appointment.getAll('unassigned')
+    ]).then(([agents, appointments]) => {
+      setSaleAgents(agents);
       setAppointments(appointments);
-    })
-    .catch(error => {
-      console.log(error);
-    })
+    }).catch(error => console.log(error));
   }, []);
 
-  const handleSubmit = async () => {
-    if (Object.keys(delegate).length < 1) {
+  const delegate = (appointment:AppointmentType, saleAgent:SaleAgentType) => {
+    const entry = delegation.find(entry => entry.appointment._id === appointment._id);
+    if (!entry) {
+      delegation.push({appointment: appointment, saleAgent: saleAgent});
+    } else {
+      const index = delegation.map(entry => entry.appointment._id).indexOf(appointment._id);
+
+      if (!saleAgent) {
+        delegation.splice(index, 1);
+      } else {
+        delegation[index].saleAgent = saleAgent;
+      }
+    }
+
+    setDelegation(delegation);
+  }
+
+  const handleDelegation = async () => {
+    if (!delegation.length) {
       return; // Nothing's delegated.
     }
 
-    await fetch(process.env.WOF_SERVER + '/appointments', {
-      method: 'PATCH',
-      mode: 'cors',
-      cache: 'no-cache',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-      },
-      body: JSON.stringify(delegate)
-    })
-    .then(response => response.json())
-    .then(() => {
-      setAppointments([...appointments.filter(appointment => !Object.keys(delegate).some(id => id === appointment['_id']))]);
-      setDelegate({});
+    await wofRest.appointment.patch(delegation)
+    .then((response) => {
+      setAppointments([...appointments.filter(appointment => !delegation.some(entry => entry.appointment._id === appointment._id))]);
+      setDelegation([]);
     });
   }
   
@@ -153,34 +89,30 @@ const DelegateAppointment: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            { appointments.map(appointment =>
-              <TableRow key={appointment['_id']}>
+            { appointments.map((appointment, index) =>
+              <TableRow key={appointment._id}>
                 <TableCell>
                   <Box sx={{ p: 1 }}>
+                  <Box>
+                      <Typography variant='caption'>{dayjs(appointment.date).format('MM/DD/YYYY')}</Typography>
+                    </Box>
                     <Box>
-                      <Typography variant='caption'>
-                        {(new Date(appointment['date'])).toLocaleDateString()}
-                      </Typography>
+                      <Typography variant='caption'>{dayjs(appointment.date).format('HH:mmA')}</Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        {(new Date(appointment['date'])).toLocaleTimeString()}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant='caption'>
-                        {appointment['customer'].address.isResidential ? 'Residential' : 'Business'}
+                        {appointment.customer.address.isResidential ? 'Residential' : 'Business'}
                       </Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box sx={{ p: 1 }}>
-                    <Box><Typography variant='caption'>{appointment['customer'].lastName}, {appointment['customer'].firstName}</Typography></Box>
-                    <Box><Typography variant='caption'>{appointment['customer'].address.street1}</Typography></Box>
+                    <Box><Typography variant='caption'>{appointment.customer.lastName}, {appointment.customer.firstName}</Typography></Box>
+                    <Box><Typography variant='caption'>{appointment.customer.address.street1}</Typography></Box>
                     <Box>
                       <Typography variant='caption'>
-                        {appointment['customer'].address.city} { ustates.find(state => state['_id'] === appointment['customer'].address.ustate)['short'] } {appointment['customer'].address.zipCode}
+                        {appointment.customer.address.city} { appointment.customer.address.ustate.short } {appointment.customer.address.zipCode}
                       </Typography>
                     </Box>
                   </Box>
@@ -188,64 +120,54 @@ const DelegateAppointment: React.FC = () => {
                 <TableCell>
                   <Box display={'flex'} flexDirection={'row'}>
                     <PhoneIcon fontSize='small' sx={{ mr: 1 }} />
-                    <Typography variant='caption'>
-                      {appointment['customer'].phoneNumber}
-                    </Typography>
+                    <Typography variant='caption'>{appointment.customer.phoneNumber}</Typography>
                   </Box>
                   <Box display={'flex'} flexDirection={'row'}>
                     <PhoneIphoneIcon fontSize='small' sx={{ mr: 1 }} />
-                    <Typography variant='caption'>
-                      {appointment['customer'].mobileNumber}
-                    </Typography>
+                    <Typography variant='caption'>{appointment.customer.mobileNumber}</Typography>
                   </Box>
                   <Box display={'flex'} flexDirection={'row'}>
                     <MailOutlineIcon fontSize='small' sx={{ mr: 1 }} />
-                    <Typography variant='caption'>
-                      {appointment['customer'].email}
-                    </Typography>
+                    <Typography variant='caption'>{appointment.customer.email}</Typography>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box sx={{ p: 1 }}>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Color</b> {colors.filter(color => appointment['colorPreference'].includes(color['_id'])).map(color => color['label']).join(', ')}
+                        <b>Color</b> {appointment.colorPreference.map(color => color.label).join(', ')}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Floor</b> {floorTypes.filter(floorType => appointment['floorType'].includes(floorType['_id'])).map(floorType => floorType['label']).join(', ')}
+                        <b>Floor</b> {appointment.floorType.map(floorType => floorType.label).join(', ')}
                       </Typography>
                     </Box>
                     <Box>
                       <Typography variant='caption'>
-                        <b>Reference</b> {references.filter(reference => appointment['reference'].includes(reference['_id'])).map(reference => reference['label']).join(', ')}
+                        <b>Reference</b> {appointment.reference.map(reference => reference.label).join(', ')}
                       </Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
-                  <FormControl sx={{m: 1}} size='small'>
-                    <InputLabel>Sale Agent</InputLabel>
-                    <Select sx={{width: '20rem'}}
-                      defaultValue={''}
-                      onChange={ e => {
-                        delegate[appointment['_id']] = e.target.value;
-                        setDelegate(delegate);
-                      }}
-                      input={<OutlinedInput label='Sale Agent' />}
-                    >
-                    { agents.map(agent => {
-                      return <MenuItem key={agent['_id']} value={agent['_id']}>{agent['firstName']} {agent['lastName']}</MenuItem>
-                    })}
-                    </Select>
-                  </FormControl>
+                <FormControl sx={{m: 1, width: '13rem'}}>
+                  <Autocomplete options={saleAgents} clearOnBlur
+                    componentsProps={{ popper: { style: { width: 'fit-content' }}}}
+                    renderOption={(props, option) => <li {...props}>{option.firstName} {option.lastName}</li>}
+                    renderInput={(params) => <TextField {...params} label="Sale Agent" />}
+                    getOptionLabel={option => `${option.firstName} ${option.lastName}`}
+                    onChange={(event, option) => delegate(appointment, option)}
+                    isOptionEqualToValue={(option, value) => option._id === value._id}
+                    size='small'
+                  />
+                </FormControl>
                 </TableCell>
               </TableRow>
             )}
             <TableRow>
               <TableCell align='center' colSpan={5}>
-                <Button variant='contained' fullWidth onClick={handleSubmit}>
+                <Button variant='contained' fullWidth onClick={handleDelegation}>
                   Delegate Agents
                 </Button>
               </TableCell>

@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
+import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -8,10 +10,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import Paper from '@mui/material/Paper';
-import Select from '@mui/material/Select';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -19,78 +18,54 @@ import TableContainer from '@mui/material/TableContainer';
 import TableFooter from '@mui/material/TableFooter';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useAuthContext } from '../../context/AuthContext';
-import { useEffect, useState } from 'react';
+
+import WofRest from '../../rest/wof-rest';
+import FirebaseUserType from '../../model/firebase-user-type';
+import SaleAgentType from '../../model/sale-agent-type';
 
 const SaleAgent: React.FC = () => {
 
-  const {user} = useAuthContext();
-  const [saleAgents, setSaleAgents] = useState<object[]>([]);
-  const [firebaseUsers, setFirebaseUsers] = useState<object[]>([]);
+  const wofRest = WofRest();
+  const [error, setError] = useState<string>('');
+
+  const [active, setActive] = useState<boolean>(true);
+  const [firebase, setFirebase] = useState<FirebaseUserType | null>(null);
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
-  const [firebase, setFirebase] = useState<object>({});
-  const [fid, setFid] = useState<string>('');
-  const [active, setActive] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
+
+  const [saleAgents, setSaleAgents] = useState<SaleAgentType[]>([]);
+  const [firebaseUsers, setFirebaseUsers] = useState<FirebaseUserType[]>([]);
 
   useEffect(() => {
     Promise.all([
-      fetch(`${process.env.WOF_SERVER}/configure/sale-agent?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json()),
-      fetch(`${process.env.WOF_SERVER}/configure/firebase-user?type=all`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-        }
-      })
-      .then(response => response.json())
-
-    ]).then(([saleAgents, firebaseUsers]) => {
-      setSaleAgents(saleAgents);
+      wofRest.firebaseUser.getAll('all'),
+      wofRest.saleAgent.getAll('all')
+    ]).then(([firebaseUsers, saleAgents]) => {
       setFirebaseUsers(firebaseUsers);
+      setSaleAgents(saleAgents);
     });
-
   }, []);
 
   const submitCreate = () => {
     setError('');
-    if (!firstName || !lastName || Object.keys(firebase).length === 0) {
+    if (!firstName || !lastName || Object.keys(firebase).length < 1) {
       setError('Empty form fields cannot be added.');
       return;
     }
 
-    fetch(`${process.env.WOF_SERVER}/configure/sale-agent`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
-      },
-      body: JSON.stringify({firstName, lastName, active, firebase})
-    })
-    .then(response => response.json())
-    .then(response => {
-      if (response.acknowledged === true && response.insertedId != null) {
-        setSaleAgents([...saleAgents, {'_id': response.insertedId, 'firstName': firstName, 'lastName': lastName, 'active': active, 'firebase': firebase}]);
-        setActive(true);
-        setFirebase({});
-        setFid('')
-        setFirstName('');
-        setLastName('');
-      }
-    })
-    .catch(() => {
-      setError('Please check your form data and try again.');
-    })
+    wofRest.saleAgent.create(active, firebase, firstName, lastName)
+      .then(response => {
+        if (response.acknowledged === true && response.insertedId != null) {
+          setSaleAgents([...saleAgents, {'_id': response.insertedId, firstName, lastName, active, firebase}]);
+          setActive(true);
+          setFirebase(null);
+          setFirstName('');
+          setLastName('');
+        }
+      })
+      .catch(() => setError('Please check your form data and try again.'))
   }
 
   return (
@@ -128,23 +103,20 @@ const SaleAgent: React.FC = () => {
                 </FormControl>
               </TableCell>
               <TableCell>
-                <FormControl sx={{m: 1}} size='small'>
-                  <InputLabel>Firebase User</InputLabel>
-                  <Select sx={{width: '20rem'}}
-                    value={fid}
-                    onChange={ e => {
-                      setFid(e.target.value);
-                      setFirebase(firebaseUsers.find(firebaseUser => firebaseUser['uid'] === e.target.value));
-                    }}
-                    input={<OutlinedInput label='Firebase User' />}
-                  >
-                  { firebaseUsers.filter(fu => !saleAgents.some(sa => sa['firebase'].uid === fu['uid'])).map( firebaseUser => <MenuItem key={firebaseUser['uid']} value={firebaseUser['uid']}>{firebaseUser['email']}</MenuItem> ) }
-                  </Select>
+                <FormControl sx={{width: '100%'}}>
+                  <Autocomplete value={firebase} clearOnBlur
+                    options={firebaseUsers.filter(user => !saleAgents.some(agent => agent.firebase.uid === user.uid))}
+                    componentsProps={{ popper: { style: { width: 'fit-content' }}}}
+                    renderOption={(props, option) => <li {...props}>{option.email}</li>}
+                    renderInput={(params) => <TextField {...params} label="Firebase User" error={!firebase} />}
+                    getOptionLabel={option => option.email}
+                    onChange={(event, option) => setFirebase(option)}
+                  />
                 </FormControl>
               </TableCell>
               <TableCell>
                 <Button fullWidth variant='contained' onClick={submitCreate}>
-                  <Typography>Create Sale Agent</Typography>
+                  <Typography>Create</Typography>
                 </Button>
               </TableCell>
             </TableRow>
@@ -154,19 +126,19 @@ const SaleAgent: React.FC = () => {
               return (
               <TableRow key={index}>
                 <TableCell>
-                  <Typography variant='h6'>{saleAgent['firstName']}</Typography>
+                  <Typography variant='h6'>{saleAgent.firstName}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant='h6'>{saleAgent['lastName']}</Typography>
+                  <Typography variant='h6'>{saleAgent.lastName}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{saleAgent['active'] ? 'Yes' : 'No'}</Typography>
+                  <Typography>{saleAgent.active ? 'Yes' : 'No'}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography>{saleAgent['firebase'].email}</Typography>
+                  <Typography>{saleAgent.firebase.email}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant='caption' fontSize={9}><pre>{JSON.stringify(saleAgent['firebase'], null, 2)}</pre></Typography>
+                  <Typography variant='caption' fontSize={9}><pre>{JSON.stringify(saleAgent.firebase, null, 2)}</pre></Typography>
                 </TableCell>
               </TableRow>
               );
