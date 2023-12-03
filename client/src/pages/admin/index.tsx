@@ -82,7 +82,7 @@ const Admin: React.FC = () => {
           <Typography variant='caption'>Accessory and Financing</Typography>
         </Button>
 
-        <Button sx={{m: 1, boxShadow: 3}} variant='outlined' onClick={() => navigate('/config/product-cost')}>
+        <Button sx={{m: 1, boxShadow: 3}} variant='contained' onClick={() => navigate('/config/product-cost')}>
           <Typography variant='caption'>Product Cost</Typography>
         </Button>
         <Button sx={{m: 1, boxShadow: 3}} variant='outlined' onClick={() => navigate('/config/retail-price')}>

@@ -4,7 +4,7 @@ const dbURL = process.env.WOF_DATABASE;
 const client = new MongoClient(dbURL, { family: 4 /* Node 17+ requirement */ });
 
 const database = client.db('world-of-floors');
-const labors = database.collection('labor-types');
+const laborTypes = database.collection('labor-types');
 
 const initRest = (app, route) => {
 
@@ -14,12 +14,12 @@ const initRest = (app, route) => {
       switch (request.query.type) {
         case 'active':
         case 'inactive':
-          data = await labors.find({ active : request.query.type === 'active' }).toArray();
+          data = await laborTypes.find({ active : request.query.type === 'active' }).toArray();
           break;
 
         case 'all':
         default:
-          data = await labors.find().toArray();
+          data = await laborTypes.find().toArray();
           break;
       }
 
@@ -36,7 +36,7 @@ const initRest = (app, route) => {
         return;
       }
 
-      response.json(await labors.insertOne(data));
+      response.json(await laborTypes.insertOne(data));
       console.log(`[HTTP][POST] ${route}: ${request.token.email} created a new ${data['label']} Labor Type.`);
     });
 

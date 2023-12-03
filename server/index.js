@@ -27,6 +27,9 @@ const socketio = require('socket.io')(server);
 // https://firebase.google.com/docs/admin/setup
 const admin = require("firebase-admin");
 const config = require("./wof-server.json");
+const { initProductCategory } = require('./routes/configure/product-category');
+const { initProductBrand } = require('./routes/configure/product-brand');
+const { initProductCost } = require('./routes/configure/product-cost');
 admin.initializeApp( { credential: admin.credential.cert(config) } );
 
 // https://expressjs.com/en/guide/writing-middleware.html
@@ -78,6 +81,9 @@ const inits = {
   priority: initPriority(app, '/configure/priority'),
   'us-state': initUState(app, '/configure/us-state'),
   'sale-agent': initSaleAgent(app, '/configure/sale-agent'),
+  'product-category': initProductCategory(app, '/configure/product-category'),
+  'product-brand': initProductBrand(app, '/configure/product-brand'),
+  'product-cost': initProductCost(app, '/configure/product-cost'),
   vendor: initVendor(app, '/configure/vendor'),
   appointment: initAppointments(socketio, app, '/appointments')
 };

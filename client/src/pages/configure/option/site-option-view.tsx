@@ -18,16 +18,22 @@ import Typography from '@mui/material/Typography';
 import { useAuthContext } from '../../../context/AuthContext';
 import { useEffect, useState } from 'react';
 
-const Color: React.FC = () => {
+interface OptionType {
+  _id: string;
+  label: string;
+  active: boolean;
+}
+
+const SiteOptionView: React.FC<{name: string; url:string; type:string;}> = ({name, url, type}) => {
 
   const {user} = useAuthContext();
-  const [colors, setColors] = useState<object[]>([]);
+  const [options, setOptions] = useState<OptionType[]>([]);
   const [label, setLabel] = useState<string>('');
   const [active, setActive] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-      fetch(`${process.env.WOF_SERVER}/configure/color?type=all`, {
+      fetch(`${process.env.WOF_SERVER}${url}?type=${type}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -35,23 +41,19 @@ const Color: React.FC = () => {
         }
       })
       .then(response => response.json())
-      .then(response => {
-        setColors(response);
-      })
-      .catch(error => {
-        console.log(error);
-      })
-
+      .then(response => setOptions(response))
+      .catch(error => console.log(error))
   }, []);
 
   const submitCreate = () => {
     setError('');
+
     if (!label) {
       setError('Empty form fields cannot be added.');
       return;
     }
 
-    fetch(`${process.env.WOF_SERVER}/configure/color`, {
+    fetch(`${process.env.WOF_SERVER}${url}`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -63,14 +65,12 @@ const Color: React.FC = () => {
     .then(response => response.json())
     .then(response => {
       if (response.acknowledged === true && response.insertedId != null) {
-        setColors([...colors, {'_id': response.insertedId, 'label': label, 'active': active}]);
+        setOptions([...options, {'_id': response.insertedId, 'label': label, 'active': active}]);
         setActive(true);
         setLabel('');
       }
     })
-    .catch(() => {
-      setError('Please check your form data and try again.');
-    })
+    .catch(() => setError('Please check your form data and try again.'))
   }
 
   return (
@@ -88,7 +88,7 @@ const Color: React.FC = () => {
               <FormControl required>
                 <InputLabel>Label</InputLabel>
                 <Input value={label} onChange={(e) => setLabel(e.target.value)} />
-                <FormHelperText>New color to display</FormHelperText>
+                <FormHelperText>New {name} to display</FormHelperText>
               </FormControl>
             </TableCell>
             <TableCell>
@@ -98,23 +98,23 @@ const Color: React.FC = () => {
             </TableCell>
             <TableCell>
               <Button fullWidth variant='contained' onClick={submitCreate}>
-                <Typography>Create Color</Typography>
+                <Typography>Create</Typography>
               </Button>
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {colors.map((color, index) => {
+          {options.map((option, index) => {
             return (
             <TableRow key={index}>
               <TableCell>
-                <Typography variant='h6'>{color['label']}</Typography>
+                <Typography variant='h6'>{option['label']}</Typography>
               </TableCell>
               <TableCell>
-                <Typography>{color['active'] ? 'Yes' : 'No'}</Typography>
+                <Typography>{option['active'] ? 'Yes' : 'No'}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant='caption' fontSize={12}><pre>{JSON.stringify(color, null, 2)}</pre></Typography>
+                <Typography variant='caption' fontSize={12}><pre>{JSON.stringify(option, null, 2)}</pre></Typography>
               </TableCell>
             </TableRow>
             );
@@ -123,7 +123,7 @@ const Color: React.FC = () => {
         <TableFooter>
           <TableRow>
             <TableCell align='center' colSpan={3}>
-              <Typography variant='caption'>{colors.length} Color(s)</Typography>
+              <Typography variant='caption'>{options.length} {name}(s)</Typography>
             </TableCell>
           </TableRow>
         </TableFooter>
@@ -132,4 +132,4 @@ const Color: React.FC = () => {
   );
 };
 
-export default Color;
+export default SiteOptionView;

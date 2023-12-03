@@ -1,4 +1,5 @@
 import Alert from '@mui/material/Alert';
+import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -22,8 +23,34 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import OptionType from '../../../model/option-type';
 import { useAuthContext } from '../../../context/AuthContext';
 import { useEffect, useState } from 'react';
+import { FilterOptionsState, createFilterOptions } from '@mui/material';
+
+const filter = createFilterOptions<OptionType>();
+
+const filterOptions = (options:OptionType[], params: FilterOptionsState<OptionType>) => {
+  const filtered = filter(options, params);
+  if (params.inputValue !== '' && !options.some(option => params.inputValue === option.label)) {
+    filtered.push({
+      inputValue: params.inputValue,
+      label: `New "${params.inputValue}"`,
+      active: true
+    });
+  }
+  return filtered;
+};
+
+const optionLabel = (option) => {
+  if (typeof option === 'object') {
+    if (option.inputValue)
+      return option.inputValue;
+
+    return option.label;
+  }
+  return option;
+};
 
 const LaborRate: React.FC = () => {
 
@@ -32,9 +59,9 @@ const LaborRate: React.FC = () => {
 
   const units = ['sqft', 'lnft', 'each'];
 
-  const [floorType, setFloorType] = useState<string>('');
-  const [laborType, setLaborType] = useState<string>('');
-  const [jobService, setJobService] = useState<string>('');
+  const [floorType, setFloorType] = useState<OptionType | null>(null);
+  const [laborType, setLaborType] = useState<OptionType | null>(null);
+  const [jobService, setJobService] = useState<OptionType | null>(null);
   const [unit, setUnit] = useState<string>('');
   const [customerCost, setCustomerCost] = useState<string>('');
   const [laborCost, setLaborCost] = useState<string>('');
@@ -43,10 +70,10 @@ const LaborRate: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [index, setIndex] = useState<number>(0);
 
-  const [laborRates, setLaborRates] = useState<object[]>([]);
-  const [floorTypes, setFloorTypes] = useState<object[]>([]);
-  const [laborTypes, setLaborTypes] = useState<object[]>([]);
-  const [jobServices, setJobServices] = useState<object[]>([]);
+  const [laborRates, setLaborRates] = useState<object[]>([null]);
+  const [floorTypes, setFloorTypes] = useState<OptionType[]>([null]);
+  const [laborTypes, setLaborTypes] = useState<OptionType[]>([null]);
+  const [jobServices, setJobServices] = useState<OptionType[]>([null]);
 
   useEffect(() => {
     Promise.all([
@@ -56,16 +83,14 @@ const LaborRate: React.FC = () => {
           'Accept': 'application/json',
           'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
         }
-      })
-      .then(response => response.json()),
+      }).then(response => response.json()),
       fetch(`${process.env.WOF_SERVER}/configure/labor-type?type=all`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
           'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
         }
-      })
-      .then(response => response.json()),
+      }).then(response => response.json()),
       fetch(`${process.env.WOF_SERVER}/configure/floor-type?type=all`, {
         method: 'GET',
         headers: {
@@ -79,18 +104,15 @@ const LaborRate: React.FC = () => {
           'Accept': 'application/json',
           'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
         }
-      })
-      .then(response => response.json()),
-    ])
-    .then(([laborRates, laborTypes, floorTypes, jobServices]) => {
+      }).then(response => response.json()),
+    ]).then(([laborRates, laborTypes, floorTypes, jobServices]) => {
       setLaborRates(laborRates);
       setLaborTypes(laborTypes);
       setFloorTypes(floorTypes);
       setJobServices(jobServices);
       setIndex(0);
-      setFloorType(floorTypes[0]['_id']);
-    })
-    .catch(error => {
+      setFloorType(floorTypes[0]);
+    }).catch(error => {
       console.log('errored out');
     });
 
@@ -98,7 +120,7 @@ const LaborRate: React.FC = () => {
 
   const submitCreate = () => {
     setError('');
-    if (!floorType || !jobService || !laborType || !customerCost || !laborCost) {
+    if (!customerCost || !floorType || !jobService || !laborCost || !laborType || !unit) {
       setError('Empty form fields cannot be added.');
       return;
     }
@@ -110,14 +132,23 @@ const LaborRate: React.FC = () => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
       },
-      body: JSON.stringify({floorType, jobService, laborType, laborCost, customerCost, active})
+      body: JSON.stringify({
+        active,
+        customerCost,
+        floorType,
+        jobService,
+        laborCost,
+        laborType,
+        unit
+      })
     })
     .then(response => response.json())
     .then(response => {
       if (response.acknowledged === true && response.insertedId != null) {
-        setLaborRates([...laborRates, {'_id': response.insertedId, floorType, jobService, laborType, laborCost, customerCost, active}]);
-        setJobService('');
-        setLaborType('');
+        setLaborRates([...laborRates, {'_id': response.insertedId, floorType, jobService, laborType, laborCost, customerCost, unit, active}]);
+        setJobService(null);
+        setLaborType(null);
+        setUnit('');
         setLaborCost('');
         setCustomerCost('');
         setActive(true);
@@ -141,9 +172,9 @@ const LaborRate: React.FC = () => {
       }
       <Tabs value={index} onChange={(e, index) => {
         setIndex(index);
-        setFloorType(floorTypes[index]['_id']);
+        setFloorType(floorTypes[index]);
       }}>
-        { floorTypes.map(floorType => <Tab key={floorType['_id']} label={floorType['label']} />) }
+        { floorType && floorTypes.map(floorType => <Tab key={floorType._id} label={floorType.label} />) }
       </Tabs>
 
       <TableContainer sx={{maxHeight: '65vh'}}>
@@ -151,32 +182,92 @@ const LaborRate: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell>
-                <FormControl sx={{ m: 1, width: '100%'}} size='small' required>
-                  <InputLabel>Labor Type</InputLabel>
-                  <Select value={laborType} error={!laborType} onChange={e => setLaborType(e.target.value)} input={<OutlinedInput label="Labor Type" />}>
-                    {laborTypes.map( laborType => <MenuItem key={laborType['_id']} value={laborType['_id']}>{laborType['label']}</MenuItem> )}
-                  </Select>
+                <FormControl required sx={{width: '100%'}}>
+                  <Autocomplete options={laborTypes} value={laborType} freeSolo clearOnBlur
+                    componentsProps={{ popper: { style: { width: 'fit-content' }}}}
+                    renderOption={(props, option) => <li {...props}>{option.label}</li>}
+                    filterOptions={(options, params) => filterOptions(options, params)}
+                    getOptionLabel={(option) => optionLabel(option)}
+                    onChange={(event, option) => {
+                      if (option['inputValue']) {
+                        // a completely new option
+                        fetch(`${process.env.WOF_SERVER}/configure/labor-type`, {
+                          method: 'POST',
+                          headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+                          },
+                          body: JSON.stringify({label: option['inputValue'], active: true})
+                        })
+                        .then(response => response.json())
+                        .then(response => {
+                          if (response.acknowledged === true && response.insertedId != null) {
+                            const lt = {'_id': response.insertedId, 'label': option['inputValue'], 'active': true};
+                            setLaborTypes([...laborTypes, lt]);
+                            setLaborType(lt);
+                          }
+                        })
+                        .catch((error) => console.log(error) )
+                      } else if (typeof option === 'object') {
+                        // valid existing option was selected
+                        setLaborType(option);
+                      }
+                    }}
+                    renderInput={(params) => {
+                      return <TextField {...params} label="Labor Type" error={!laborType} value={laborType} />
+                    }}
+                  />
                 </FormControl>
               </TableCell>
               <TableCell>
-                <FormControl sx={{ m: 1, width: '100%'}} size='small' required>
-                  <InputLabel>Job Service</InputLabel>
-                  <Select error={!jobService} value={jobService} onChange={e => setJobService(e.target.value)} input={<OutlinedInput label="Job Service" />}>
-                    {jobServices.map( jobService => <MenuItem key={jobService['_id']} value={jobService['_id']}>{jobService['label']}</MenuItem> )}
-                  </Select>
-                </FormControl>
+                <Autocomplete options={jobServices} value={jobService} freeSolo clearOnBlur
+                  componentsProps={{ popper: { style: { width: 'fit-content' }}}}
+                  renderOption={(props, option) => <li {...props}>{option.label}</li>}
+                  filterOptions={(options, params) => filterOptions(options, params)}
+                  getOptionLabel={(option) => optionLabel(option)}
+                  onChange={(event, option) => {
+                    if (option['inputValue']) {
+                      // a completely new option
+                      console.log('new value was entered, do a REST call to add new jobService, then setJobServices(response), setJobService(jobService)')
+                      fetch(`${process.env.WOF_SERVER}/configure/job-service`, {
+                        method: 'POST',
+                        headers: {
+                          'Accept': 'application/json',
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${btoa(user['multiFactor'].user.accessToken)}`
+                        },
+                        body: JSON.stringify({label: option['inputValue'], active: true})
+                      })
+                      .then(response => response.json())
+                      .then(response => {
+                        if (response.acknowledged === true && response.insertedId != null) {
+                          const js = {'_id': response.insertedId, 'label': option['inputValue'], 'active': true};
+                          setJobServices([...jobServices, js ]);
+                          setJobService(js);
+                        }
+                      })
+                      .catch((error) => console.log(error))
+                    } else if (typeof option === 'object') {
+                      // valid existing option was selected
+                      setJobService(option);
+                    }
+                  }}
+                  renderInput={(params) => {
+                    return <TextField {...params} label="Job Service" error={!jobService}/>
+                  }} />
               </TableCell>
               <TableCell>
-                <FormControl sx={{ m: 1, width: '100%'}} size='small' required>
-                  <InputLabel>Unit</InputLabel>
-                  <Select error={!unit} value={unit} onChange={e => setUnit(e.target.value)} input={<OutlinedInput label="Unit" />}>
+                <FormControl sx={{ width: '100%'}} required>
+                  <InputLabel error={!unit}>Unit</InputLabel>
+                  <Select error={!unit} value={unit} onChange={e => setUnit(e.target.value)} input={<OutlinedInput label="Unit" error={!unit} />}>
                     {units.map( unit => <MenuItem key={unit} value={unit}>{unit}</MenuItem> )}
                   </Select>
                 </FormControl>
               </TableCell>
               <TableCell>
-                <FormControl required sx={{ m: 1, width: '7rem'}}>
-                  <TextField label='Customer Cost' size='small' type='number' value={customerCost} onChange={(e) => { 
+                <FormControl required sx={{ width: '100%'}}>
+                  <TextField label='Customer Cost' type='number' value={customerCost} onChange={(e) => { 
                       setCustomerCost(e.target.value)
                     }}
                      error={!customerCost}
@@ -186,8 +277,8 @@ const LaborRate: React.FC = () => {
                 </FormControl>
               </TableCell>
               <TableCell>
-                <FormControl required sx={{ m: 1, width: '7rem'}}>
-                  <TextField label='Labor Cost' size='small' value={laborCost} type='number' onChange={(e) => setLaborCost(e.target.value)} error={!laborCost}
+                <FormControl required sx={{ width: '100%'}}>
+                  <TextField label='Labor Cost' value={laborCost} type='number' onChange={(e) => setLaborCost(e.target.value)} error={!laborCost}
                     inputProps={{ step: 0.01 }}
                     InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }}
                   />
@@ -204,14 +295,14 @@ const LaborRate: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {laborRates.filter(laborRate => laborRate['floorType'] === floorType).map((laborRate, index) => {
+            {floorType && laborRates.filter(laborRate => laborRate['floorType']._id === floorType._id).map((laborRate, index) => {
               return (
               <TableRow key={index}>
                 <TableCell>
-                  <Typography variant='h6'>{laborTypes.find(laborType => laborType['_id'] === laborRate['laborType'])['label']}</Typography>
+                  <Typography variant='h6'>{laborTypes.find(laborType => laborType['_id'] === laborRate['laborType']._id)['label']}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant='h6'>{jobServices.find(jobService => jobService['_id'] === laborRate['jobService'])['label']}</Typography>
+                  <Typography variant='h6'>{jobServices.find(jobService => jobService['_id'] === laborRate['jobService']._id)['label']}</Typography>
                 </TableCell>
                 <TableCell>
                   <Typography>{laborRate['unit']}</Typography>
@@ -233,7 +324,7 @@ const LaborRate: React.FC = () => {
             <TableRow>
               <TableCell align='center' colSpan={7}>
                 <Typography variant='caption'>
-                  {floorTypes[index] && `${laborRates.filter(laborRate => laborRate['floorType'] === floorType).length} ${floorTypes[index]['label']} Labor Rate(s)`}
+                  {floorTypes[index] && `${laborRates.filter(laborRate => laborRate['floorType']._id === floorType._id).length} ${floorTypes[index]['label']} Labor Rate(s)`}
                 </Typography>
               </TableCell>
             </TableRow>
