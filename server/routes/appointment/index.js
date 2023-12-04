@@ -13,8 +13,9 @@ const initWs = (socketio, route) => {
   nsp.on('connection', async (socket) => {
     await admin.auth().verifyIdToken(socket.handshake.auth.token)
       .then(async token => {
-        socket.emit('list', await appointments.find({"agent": token.uid}).toArray());
-        console.log(`[WS][CONNECTION] ${route}: clients[${nsp.sockets.size}], send appointments to ${token.email} at socket::list ${socket.id}`);
+        const list = await appointments.find({'agent.firebase.uid': token.uid}).toArray();
+        socket.emit('list', list);
+        console.log(`[WS][CONNECTION] ${route}: clients[${nsp.sockets.size}], send appointments[${list.length}] to ${token.email} at socket::list ${socket.id}`);
       })
       .catch(error => {
         console.log(`[WS][CONNECTION] ${route}: firebase error ${error}, terminating ${socket.id}`);
