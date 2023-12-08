@@ -47,9 +47,8 @@ jobs:
 
       - name: NVM Install
         run: | 
-          sudo apt update
-          sudo apt install nodejs
-          node -v
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+          ls -Fsal ~/
 
       # - name: NPM Install Dependencies
       #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
