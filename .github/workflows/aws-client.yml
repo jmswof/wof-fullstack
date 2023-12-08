@@ -32,9 +32,6 @@ jobs:
     needs: upload-to-ec2
     steps:
       - name: Set up SSH
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 21
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.AWS_OPENSSH_PEM }}" > ~/.ssh/fs.wofadmin.com.key
