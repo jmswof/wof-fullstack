@@ -34,7 +34,7 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          cat ${{ secrets.AWS_OPENSSH_PEM }} >> ~/.ssh/fs.wofadmin.com.key
+          echo "${{ secrets.AWS_OPENSSH_PEM }}" > ~/.ssh/fs.wofadmin.com.key
           touch ~/.ssh/config
 
       # - name: NPM Install Dependencies
