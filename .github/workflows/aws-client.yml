@@ -46,7 +46,7 @@ jobs:
           cat ~/.ssh/config
 
       - name: NVM Install
-        run: ssh fs.wofadmin.com 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash'
+        run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 
       - name: NVM Install Node
         run: nvm ls-remote
