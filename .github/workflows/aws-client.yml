@@ -56,5 +56,5 @@ jobs:
       - name: Upload built folder to EC2
         run: |
           cd fs/client
-          scp -r dist fs.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
+          scp -r dist/* fs.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
         
