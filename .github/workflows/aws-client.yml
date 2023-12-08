@@ -48,7 +48,8 @@ jobs:
       - name: NVM Install
         run: | 
           curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-          ls -Fsal ~/
+          source ~/.bashrc
+          nvm ls-remote
 
       # - name: NPM Install Dependencies
       #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
