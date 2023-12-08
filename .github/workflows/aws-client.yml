@@ -33,18 +33,7 @@ jobs:
     steps:
       - name: Set up SSH
         run: |
-          mkdir -p ~/.ssh/
-          echo ${{ secrets.AWS_OPENSSH_PEM }} > ~/.ssh/fs.wofadmin.com.key
-          chmod 600 ~/.ssh/fs.wofadmin.com.key
-          touch ~/.ssh/config
-          echo '
-          Host fs.wofadmin.com
-            HostName ${{ vars.AWS_EC2_DNS }}
-            User ${{ secrets.AWS_USER }}
-            IdentityFile ~/.ssh/fs.wofadmin.com.key
-            StrictHostKeyChecking no
-          ' > ~/.ssh/config
-          cat ~/.ssh/config
+          mkdir -p ~/.ssh
 
       - name: NPM Install Dependencies
         run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
