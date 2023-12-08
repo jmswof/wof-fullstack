@@ -45,8 +45,16 @@ jobs:
           " > ~/.ssh/config
           cat ~/.ssh/config
 
-      - name: NPM Install Dependencies
-        run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
+      - name: NVM Install
+        run: ssh fs.wofadmin.com 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash'
 
-      - name: NPM Build fs.wofadmin.com Project
-        run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && ls -Fsal'
+      - name: NVM Install Node
+        run: nvm ls-remote
+
+      # - name: NPM Install Dependencies
+      #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
+
+      # - name: NPM Build fs.wofadmin.com Project
+      #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && ls -Fsal'
+
+        
