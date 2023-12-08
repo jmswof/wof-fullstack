@@ -25,7 +25,7 @@ jobs:
         run: |
           ssh-agent -a $SSH_AUTH_SOCK > /dev/null
           ssh-add - <<< "${{ secrets.AWS_OPENSSH_PEM }}"
-          scp -o StrictHostKeyChecking=no -r fs/client ${{ vars.AWS_SCP }}
+          scp -o StrictHostKeyChecking=no -r fs/client ${{ secrets.AWS_USER }}@${{ vars.AWS_EC2_DNS }}:${{ vars.AWS_EC2_BUILD_PATH }}
 
   build-in-ec2:
     runs-on: ubuntu-latest
@@ -33,4 +33,4 @@ jobs:
     steps:
       - name: Build wof-fullstack/client Project
         run: |
-          npm install
+          ls -Fsal
