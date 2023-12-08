@@ -40,6 +40,7 @@ jobs:
         run: |
           cd fs/server
           scp -r index.js routes package.json fsa.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
+          ssh fsa.wofadmin.com 'echo "${{ vars.WOF_FIREBASE }}" > ${{ vars.AWS_EC2_BUILD_PATH }}/wof-server.json'
 
       - name: NPM Install Dependencies
         run: |
