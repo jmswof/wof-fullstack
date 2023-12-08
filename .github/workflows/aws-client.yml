@@ -6,27 +6,6 @@ on:
       branches: [ main ]
 
 jobs:
-  # upload-to-ec2:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout wof-fullstack Repo in GitHub Workspace
-  #       uses: actions/checkout@v4
-  #       with: 
-  #         path: fs
-
-  #     - name: Print wof-fullstack Secrets
-  #       run: |
-  #         echo "${{ secrets.AWS_OPENSSH_PEM }}"
-  #         echo ${{ vars.AWS_SCP }}
-
-  #     - name: Upload wof-fullstack to dist folder on AWS EC2 server
-  #       env:
-  #         SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-  #       run: |
-  #         ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-  #         ssh-add - <<< "${{ secrets.AWS_OPENSSH_PEM }}"
-  #         scp -o StrictHostKeyChecking=no -r fs/client ${{ secrets.AWS_USER }}@${{ vars.AWS_EC2_DNS }}:${{ vars.AWS_EC2_BUILD_PATH }}
-
   build-in-ec2:
     runs-on: ubuntu-latest
     steps:
@@ -51,7 +30,6 @@ jobs:
 
       - name: Install NVM to use Node21
         run: | 
-          cd fs/client
           curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
           source ~/.bash_profile
           nvm install 21.2.0
@@ -59,10 +37,12 @@ jobs:
 
       - name: NPM Install Dependencies
         run: |
+          cd fs/client
           npm install
           npm run build
       
       - name: Upload built folder to EC2
         run: |
+          cd fs/client
           ls -Fsal
         
