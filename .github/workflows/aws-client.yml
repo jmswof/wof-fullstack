@@ -19,10 +19,10 @@ jobs:
           echo "${{ secrets.AWS_OPENSSH_PEM }}"
           echo ${{ vars.AWS_SCP }}
 
-      # - name: Upload wof-fullstack to remote AWS EC2 server
-      #   env:
-      #     SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-      #   run: |
-      #     ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-      #     ssh-add - <<< "${{ secrets.AWS_PRIVATE_KEY }}"
-      #     scp -o StrictHostKeyChecking=no -r fs/client ${{ secrets.AWS_SCP_REMOTE_PATH }}
+      - name: Upload wof-fullstack to dist folder on AWS EC2 server
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-add - <<< "${{ secrets.AWS_OPENSSH_PEM }}"
+          scp -o StrictHostKeyChecking=no -r fs/client ${{ vars.AWS_SCP }}
