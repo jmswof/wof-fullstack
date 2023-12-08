@@ -39,11 +39,11 @@ jobs:
       - name: Upload built folder to EC2
         run: |
           cd fs/server
-          scp -r index.js routes fsa.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
+          scp -r index.js routes package.json fsa.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
 
       - name: NPM Install Dependencies
         run: |
-          ssh fsa.wofadmin.com 'npm install'
+          ssh fsa.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
 
       - name: Stop Process Manager
         run: |
