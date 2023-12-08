@@ -17,7 +17,7 @@ jobs:
       - name: Print wof-fullstack Secrets
         run: |
           echo "${{ secrets.AWS_OPENSSH_PEM }}"
-          echo $AWS_SCP
+          echo ${{ vars.AWS_SCP }}
 
       # - name: Upload wof-fullstack to remote AWS EC2 server
       #   env:
