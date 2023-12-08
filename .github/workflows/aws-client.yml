@@ -34,9 +34,11 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
+          cat ${{ secrets.AWS_OPENSSH_PEM }} > ~/.ssh/fs.wofadmin.com.key
+          touch ~/.ssh/config
 
-      - name: NPM Install Dependencies
-        run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
+      # - name: NPM Install Dependencies
+      #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
 
-      - name: NPM Build fs.wofadmin.com Project
-        run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && ls -Fsal'
+      # - name: NPM Build fs.wofadmin.com Project
+      #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && ls -Fsal'
