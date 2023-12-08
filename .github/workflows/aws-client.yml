@@ -49,20 +49,20 @@ jobs:
         with:
           path: fs
 
-      - name: NVM Install
+      - name: Install NVM to use Node21
         run: | 
           cd fs/client
           curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
           source ~/.bash_profile
           nvm install 21.2.0
           nvm use 21.2.0
+
+      - name: NPM Install Dependencies
+        run: |
           npm install
           npm run build
-
-      # - name: NPM Install Dependencies
-      #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
-
-      # - name: NPM Build fs.wofadmin.com Project
-      #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && ls -Fsal'
-
+      
+      - name: Upload built folder to EC2
+        run: |
+          ls -Fsal
         
