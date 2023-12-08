@@ -6,7 +6,7 @@ on:
       branches: [ main ]
 
 jobs:
-  build-in-ec2:
+  deploy-to-ec2:
     runs-on: ubuntu-latest
     steps:
       - name: Set up SSH
@@ -63,6 +63,10 @@ jobs:
           ssh fs.wofadmin.com 'sudo rm -rf /var/www/fs.wofadmin.com/*'
           ssh fs.wofadmin.com 'sudo cp -r ${{ vars.AWS_EC2_BUILD_PATH }}/* /var/www/fs.wofadmin.com'
           ssh fs.wofadmin.com 'sudo rm -rf ${{ vars.AWS_EC2_BUILD_PATH }}/*'
+      
+      - name: Restart HTTPD
+        run: |
+          ssh fs.wofadmin.com 'sudo systemctl restart httpd'
 
         
         
