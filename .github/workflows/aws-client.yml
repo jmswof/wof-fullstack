@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout wof-fullstack Repo in GitHub Workspace
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with: 
           path: fs
 
@@ -32,6 +32,9 @@ jobs:
     needs: upload-to-ec2
     steps:
       - name: Set up SSH
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.AWS_OPENSSH_PEM }}" > ~/.ssh/fs.wofadmin.com.key
@@ -46,10 +49,7 @@ jobs:
           cat ~/.ssh/config
 
       - name: NVM Install
-        run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-
-      - name: NVM Install Node
-        run: nvm ls-remote
+        run: node --version
 
       # - name: NPM Install Dependencies
       #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
