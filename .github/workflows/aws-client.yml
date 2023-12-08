@@ -48,6 +48,10 @@ jobs:
         run: |
           cd fs/client
           npm run build
+
+      - name: Reset Remote HTML Folder
+        run: |
+          ssh fs.wofadmin.com 'sudo rm -rf ${{ vars.AWS_EC2_BUILD_PATH }}/*'
       
       - name: Upload built folder to EC2
         run: |
