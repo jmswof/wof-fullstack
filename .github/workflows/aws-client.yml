@@ -6,7 +6,7 @@ on:
       branches: [ main ]
 
 jobs:
-  deploy-to-ec2:
+  upload-to-ec2:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout wof-fullstack Repo in GitHub Workspace
@@ -26,3 +26,10 @@ jobs:
           ssh-agent -a $SSH_AUTH_SOCK > /dev/null
           ssh-add - <<< "${{ secrets.AWS_OPENSSH_PEM }}"
           scp -o StrictHostKeyChecking=no -r fs/client ${{ vars.AWS_SCP }}
+
+  build-in-ec2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build wof-fullstack/client Project
+        run: |
+          npm install
