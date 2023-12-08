@@ -32,18 +32,6 @@ jobs:
         run: |
           echo "${{ vars.FSA_BUILD_ENVIRONMENT }}" > fs/server/.env
 
-      - name: Install NVM to use Node21
-        run: | 
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-          source ~/.bash_profile
-          nvm install 21.2.0
-          nvm use 21.2.0
-
-      - name: NPM Install Dependencies
-        run: |
-          cd fs/server
-          npm install
-
       - name: Reset Remote Build Folder
         run: |
           ssh fsa.wofadmin.com 'sudo rm -rf ${{ vars.AWS_EC2_BUILD_PATH }}/*'
@@ -51,7 +39,11 @@ jobs:
       - name: Upload built folder to EC2
         run: |
           cd fs/server
-          scp -r index.js routes node_modules fsa.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
+          scp -r index.js routes fsa.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
+
+      - name: NPM Install Dependencies
+        run: |
+          ssh fsa.wofadmin.com 'npm install'
 
       - name: Stop Process Manager
         run: |
