@@ -31,7 +31,6 @@ jobs:
       - name: Initialize Environment File
         run: |
           echo "${{ vars.BUILD_ENVIRONMENT }}" > fs/client/.env
-          ls -Fsal fs/client
 
       - name: Install NVM to use Node21
         run: | 
@@ -49,5 +48,5 @@ jobs:
       - name: Upload built folder to EC2
         run: |
           cd fs/client
-          ls -Fsal
+          scp fs/client/dist fs.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
         
