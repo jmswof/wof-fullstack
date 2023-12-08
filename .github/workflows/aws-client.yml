@@ -48,7 +48,8 @@ jobs:
       - name: NVM Install
         run: | 
           curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-          source ~/.bashrc
+          source ~/.profile
+          source ~/.bash_profile
           nvm ls-remote
 
       # - name: NPM Install Dependencies
