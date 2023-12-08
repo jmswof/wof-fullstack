@@ -1,4 +1,4 @@
-name: Deploy to Amazon EC2 (fsa-wofadmin-com)
+name: Deploy to fsa-wofadmin-com
 
 on:
   workflow_dispatch:

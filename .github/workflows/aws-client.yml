@@ -1,4 +1,4 @@
-name: Deploy to Amazon EC2 (fs-wofadmin-com)
+name: Deploy to fs-wofadmin-com
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       branches: [ main ]
 
 jobs:
-  deploy-to-ec2:
+  deploy-to-client:
     runs-on: ubuntu-latest
     steps:
       - name: Set up SSH
