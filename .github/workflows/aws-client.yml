@@ -49,7 +49,7 @@ jobs:
           cd fs/client
           npm run build
 
-      - name: Reset Remote HTML Folder
+      - name: Reset Remote Build Folder
         run: |
           ssh fs.wofadmin.com 'sudo rm -rf ${{ vars.AWS_EC2_BUILD_PATH }}/*'
       
@@ -57,4 +57,11 @@ jobs:
         run: |
           cd fs/client
           scp -r dist/* fs.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
+
+      - name: Update Remote Folder
+        run: |
+          ssh fs.wofadmin.com 'sudo rm -rf /var/www/fs.wofadmin.com/*'
+          ssh fs.wofadmin.com 'sudo mv ${{ vars.AWS_EC2_BUILD_PATH }} /var/www/fs.wofadmin.com'
+
+        
         
