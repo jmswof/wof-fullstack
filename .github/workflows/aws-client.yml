@@ -12,12 +12,17 @@ jobs:
       - name: Checkout wof-fullstack Repo in GitHub Workspace
         uses: actions/checkout@v2
         with: 
-          path: wof-fullstack
+          path: fs
 
-      - name: Upload wof-fullstack to remote AWS EC2 server
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+      - name: Print wof-fullstack Secrets
         run: |
-          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
-          ssh-add - <<< "${{ secrets.AWS_PRIVATE_KEY }}"
-          scp -o StrictHostKeyChecking=no -r wof-fullstack/client ${{ secrets.AWS_SCP_REMOTE_PATH }}
+          echo $AWS_OPENSSH_PEM
+          echo $AWS_SCP
+
+      # - name: Upload wof-fullstack to remote AWS EC2 server
+      #   env:
+      #     SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+      #   run: |
+      #     ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+      #     ssh-add - <<< "${{ secrets.AWS_PRIVATE_KEY }}"
+      #     scp -o StrictHostKeyChecking=no -r fs/client ${{ secrets.AWS_SCP_REMOTE_PATH }}
