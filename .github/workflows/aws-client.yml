@@ -62,7 +62,7 @@ jobs:
         run: |
           ssh fs.wofadmin.com 'sudo rm -rf /var/www/fs.wofadmin.com/*'
           ssh fs.wofadmin.com 'sudo cp -r ${{ vars.AWS_EC2_BUILD_PATH }}/* /var/www/fs.wofadmin.com'
-          ssh fs.wofadmin.com 'sudo rm -rf ${{ vars.AWS_EC2_BUILD_PATH }}'
+          ssh fs.wofadmin.com 'sudo rm -rf ${{ vars.AWS_EC2_BUILD_PATH }}/*'
 
         
         
