@@ -46,7 +46,10 @@ jobs:
           cat ~/.ssh/config
 
       - name: NVM Install
-        run: node --version
+        run: | 
+          sudo apt update
+          sudo apt install nodejs
+          node -v
 
       # - name: NPM Install Dependencies
       #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
