@@ -45,9 +45,8 @@ jobs:
           " > ~/.ssh/config
           cat ~/.ssh/config
 
+      - name: NPM Install Dependencies
+        run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
 
-      # - name: NPM Install Dependencies
-      #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
-
-      # - name: NPM Build fs.wofadmin.com Project
-      #   run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && ls -Fsal'
+      - name: NPM Build fs.wofadmin.com Project
+        run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && ls -Fsal'
