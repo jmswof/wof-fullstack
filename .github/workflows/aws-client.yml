@@ -22,11 +22,16 @@ jobs:
           StrictHostKeyChecking no
           " > ~/.ssh/config
           cat ~/.ssh/config
-      
+
       - name: Checkout wof-fullstack Repo in the Workspace
         uses: actions/checkout@v4
         with:
           path: fs
+
+      - name: Initialize Environment File
+        run: |
+          echo "${{ vars.BUILD_ENVIRONMENT }}" > fs/client/.env
+          ls -Fsal fs/client
 
       - name: Install NVM to use Node21
         run: | 
