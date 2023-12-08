@@ -43,10 +43,14 @@ jobs:
         run: |
           cd fs/client
           npm install
+
+      - name: NPM Build Project
+        run: |
+          cd fs/client
           npm run build
       
       - name: Upload built folder to EC2
         run: |
           cd fs/client
-          scp fs/client/dist fs.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
+          scp -r dist fs.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
         
