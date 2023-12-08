@@ -31,6 +31,21 @@ jobs:
     runs-on: ubuntu-latest
     needs: upload-to-ec2
     steps:
-      - name: Build wof-fullstack/client Project
+      - name: Set up SSH
         run: |
-          ls -Fsal
+          mkdir -p ~/.ssh/
+          echo ${{ secrets.AWS_OPENSSH_PEM }} > ~/.ssh/fs.wofadmin.com.key
+          chmod 600 ~/.ssh/fs.wofadmin.com.key
+          cat >>~/.ssh/config <<END
+          Host fs.wofadmin.com
+            HostName ${{ vars.AWS_EC2_DNS }}
+            User ${{ secrets.AWS_USER }}
+            IdentityFile ~/.ssh/fs.wofadmin.com.key
+            StrictHostKeyChecking no
+          END
+
+      - name: NPM Install Dependencies
+        run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && npm install'
+
+      - name: NPM Build fs.wofadmin.com Project
+        run: ssh fs.wofadmin.com 'cd ${{ vars.AWS_EC2_BUILD_PATH }} && ls -Fsal'
