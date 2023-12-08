@@ -1,0 +1,69 @@
+name: Deploy to Amazon EC2 (fsa-wofadmin-com)
+
+on:
+  workflow_dispatch:
+    push:
+      branches: [ main ]
+
+jobs:
+  deploy-to-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AWS_OPENSSH_PEM }}" > ~/.ssh/fsa.wofadmin.com.key
+          chmod 600 ~/.ssh/fsa.wofadmin.com.key
+          touch ~/.ssh/config
+          echo "Host fsa.wofadmin.com
+          HostName ${{ vars.AWS_FSA_DNS }}
+          User ${{ secrets.AWS_USER }}
+          IdentityFile ~/.ssh/fsa.wofadmin.com.key
+          StrictHostKeyChecking no
+          " > ~/.ssh/config
+          cat ~/.ssh/config
+
+      - name: Checkout wof-fullstack Repo in the Workspace
+        uses: actions/checkout@v4
+        with:
+          path: fs
+
+      - name: Initialize Environment File
+        run: |
+          echo "${{ vars.FSA_BUILD_ENVIRONMENT }}" > fs/server/.env
+
+      - name: Install NVM to use Node21
+        run: | 
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+          source ~/.bash_profile
+          nvm install 21.2.0
+          nvm use 21.2.0
+
+      - name: NPM Install Dependencies
+        run: |
+          cd fs/server
+          npm install
+
+      - name: Reset Remote Build Folder
+        run: |
+          ssh fsa.wofadmin.com 'sudo rm -rf ${{ vars.AWS_EC2_BUILD_PATH }}/*'
+      
+      - name: Upload built folder to EC2
+        run: |
+          cd fs/server
+          scp -r index.js routes node_modules fsa.wofadmin.com:${{ vars.AWS_EC2_BUILD_PATH }}
+
+      - name: Stop Process Manager
+        run: |
+          ssh fsa.wofadmin.com 'pm2 stop wof-express'
+
+      - name: Update Remote Folder
+        run: |
+          ssh fsa.wofadmin.com 'sudo rm -rf /var/www/fsa.wofadmin.com/*'
+          ssh fsa.wofadmin.com 'sudo cp -r ${{ vars.AWS_EC2_BUILD_PATH }}/* /var/www/fsa.wofadmin.com'
+          ssh fsa.wofadmin.com 'sudo rm -rf ${{ vars.AWS_EC2_BUILD_PATH }}/*'
+      
+      - name: Restart PM2 + HTTPD
+        run: |
+          ssh fsa.wofadmin.com 'pm2 start wof-express'
+          ssh fsa.wofadmin.com 'sudo systemctl restart httpd'
